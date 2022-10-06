@@ -9,7 +9,7 @@ class HandleCSV extends React.Component {
     }
 
     parseCoordinatesFromCsv(props) {
-        console.log(props.fileName);
+        // console.log(props.fileName);
     }
 }
  
