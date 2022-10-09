@@ -5,7 +5,8 @@ import {
     Popup,
     TileLayer,
     Marker,
-    Circle
+    Circle,
+    CircleMarker
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css'
 import markerIconPng from "leaflet/dist/images/marker-icon.png"
@@ -31,7 +32,7 @@ function Map() {
                 zoom={14}
                 minZoom={15}
                 maxZoom={18}
-                style={{width: '50vw', height: '50vh'}
+                style={{width: '80vw', height: '80vh'}
                 }
                 >
                 <TileLayer
@@ -49,15 +50,53 @@ function Map() {
                     p15_bitrate.map((segment) => {
                         if(segment.bitrate < 1) {
                             return(
-                                <Circle center={[segment.lat, segment.long]} radius={1}
+                                <CircleMarker center={[segment.lat, segment.long]} radius={1}
                                 pathOptions={{ color: 'red' }}
-                                />
+                                eventHandlers={{
+                                    mouseover: (event) => event.target.openPopup(),
+                                }}
+                                >
+                                    <Popup>{segment.bitrate}</Popup>
+                                </CircleMarker>
+                            );
+                        } else if(segment.bitrate > 6) {
+                            return(
+                                <CircleMarker center={[segment.lat, segment.long]} radius={1}
+                                pathOptions={{ color: 'green' }}
+                                eventHandlers={{
+                                    mouseover: (event) => event.target.openPopup(),
+                                }}
+                                >
+                                    <Popup
+                                        onMouseOver = {event => event.target.openPopup()}
+                                    >{segment.bitrate}</Popup>
+                                </CircleMarker>
+                            );
+                        } else if(segment.bitrate >= 1 && segment.bitrate <= 3) {
+                            return(
+                                <CircleMarker center={[segment.lat, segment.long]} radius={1}
+                                pathOptions={{ color: 'orange' }}
+                                eventHandlers={{
+                                    mouseover: (event) => event.target.openPopup(),
+                                }}
+                                >
+                                    <Popup
+                                        onMouseOver = {event => event.target.openPopup()}
+                                    >{segment.bitrate}</Popup>
+                                </CircleMarker>
                             );
                         } else {
                             return(
-                                <Circle center={[segment.lat, segment.long]} radius={1}
-                                pathOptions={{ color: 'green' }}
-                                />
+                                <CircleMarker center={[segment.lat, segment.long]} radius={1}
+                                pathOptions={{ color: 'yellow' }}
+                                eventHandlers={{
+                                    mouseover: (event) => event.target.openPopup(),
+                                }}
+                                >
+                                    <Popup
+                                        onMouseOver = {event => event.target.openPopup()}
+                                    >{segment.bitrate}</Popup>
+                                </CircleMarker>
                             );
                         }
                     })
