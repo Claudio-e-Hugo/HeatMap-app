@@ -4,7 +4,8 @@ import {
     Polyline,
     Popup,
     TileLayer,
-    Marker
+    Marker,
+    Circle
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css'
 import markerIconPng from "leaflet/dist/images/marker-icon.png"
@@ -20,15 +21,17 @@ const p19_coords = [40.64339, -8.65847];
 
 const coords = getLinesFromJson();
 
+const p15_bitrate = getP15FromJson();
+
 function Map() {
     return (
         <div>
             <MapContainer id="map-container"
                 center={center}
-                zoom={17}
+                zoom={14}
                 minZoom={15}
                 maxZoom={18}
-                style={{width: '100vw', height: '100vh'}
+                style={{width: '50vw', height: '50vh'}
                 }
                 >
                 <TileLayer
@@ -41,7 +44,23 @@ function Map() {
                             <Polyline key={street} color={"black"} opacity={"50%"} positions={coords[street]}></Polyline>
                         );
                     })
-
+                }
+                {
+                    p15_bitrate.map((segment) => {
+                        if(segment.bitrate < 1) {
+                            return(
+                                <Circle center={[segment.lat, segment.long]} radius={1}
+                                pathOptions={{ color: 'red' }}
+                                />
+                            );
+                        } else {
+                            return(
+                                <Circle center={[segment.lat, segment.long]} radius={1}
+                                pathOptions={{ color: 'green' }}
+                                />
+                            );
+                        }
+                    })
                 }
                 <Marker position={p15_coords} icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}>
                     <Popup>
@@ -62,6 +81,11 @@ function Map() {
 // loads the street data from json file
 function getLinesFromJson() {
     return require('../data/lines1.json');
+}
+
+//loads the p15 data from json file
+function getP15FromJson() {
+    return require('../data/data_p15.json');
 }
 
 export default Map;
