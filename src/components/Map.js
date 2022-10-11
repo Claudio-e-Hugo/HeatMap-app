@@ -30,23 +30,26 @@ const p19_coords = [40.64339, -8.65847];
 
 const coords = getLinesFromJson();
 
-const p15_bitrate = getP15FromJson();
-const p19_bitrate = getP19FromJson();
-
+const p15 = getP15FromJson();
+const p19 = getP19FromJson();
+//empty json object
 var color="";
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
-const post = "p15";
-
+// const posts = [];
 function Map() {
 
-    const [heat, setHeat] = useState("");
-    const [post, setPost] = useState([]);
+    const [heat, setHeat] = useState("bitrate");
+    const [post, setPost] = useState(["p15"]);
     
     useEffect(() => {
         console.log('Heat is now: ', heat);
     }, [heat]);
+
+    useEffect(() => {
+        console.log('Post is now: ', post);
+    }, [post]);
 
     const handleChange = (event) => {
         setHeat(event.target.value);
@@ -54,15 +57,24 @@ function Map() {
     }
 
     const handleChangeCheckBox = (event) => {
-        const currentIndex = post.indexOf(event);
-        const newPost = [...post];
-        if(currentIndex === -1) {
-            newPost.push(event);
-        } else {
-            newPost.splice(currentIndex, 1);
+        //if check add to post array
+        if(event.target.checked){
+            setPost([...post, event.target.value]);
         }
-        setPost(newPost);
-        console.log(post);
+        //if uncheck remove from post array
+        else{
+            setPost(post.filter(item => item !== event.target.value));
+        }
+        
+    }
+    
+    var data;
+    if (post == "p15") {
+    data=p15;
+    } else if (post == "p19") {
+    data=p19;
+    }else{
+    data=p15.concat(p19);
     }
     
     return (
@@ -119,121 +131,106 @@ function Map() {
                             })
                         }
 
-                        {
-                            post == "p15" ? 
-                            p15_bitrate.map((segment) => {
-                                //if radio button is selected, show the circles
-                                if(heat === "bitrate"){
-                                    color = "hsl(" + (segment.bitrate*15) + ", 100%, 50%)";
-                                    // console.log(segment.bitrate);
-                                } else if(heat === "jitter"){
-                                    color = "hsl(" + ((120 - segment.jitter)) + ", 100%, 50%)";  
-                                    // console.log(segment.jitter);
-                                } else if(heat === "ploss"){ 
-                                    color = "hsl(" + ((120-segment.lost )) + ", 100%, 50%)";
-                                    // console.log(segment.lost);
-                                } else {
-                                    color = "hsl(" + (segment.bitrate*15) + ", 100%, 50%)";
-                                    // console.log(segment.bitrate);
-                                }
-                                
-                                return(
-                                    <CircleMarker center={[segment.lat, segment.long]} radius={2}
-                                    pathOptions={{ color: color }}
-                                    eventHandlers={{
-                                        //check the heat value and show the popup with the right data
-                                        
-                                                                    
-                                        mouseover: (event) => {
-                                            if(heat === "bitrate"){
-                                                event.target.bindPopup("Bitrate: " + segment.bitrate + " kbps").openPopup();
-                                            }
-                                            if(heat === "jitter"){
-                                                event.target.bindPopup("Jitter: " + segment.jitter + " ms").openPopup();
-                                            }
-                                            if(heat === "ploss"){
-                                                event.target.bindPopup("Packet Loss: " + segment.lost + " %").openPopup();
-                                            }
-                                            event.target.openPopup()},
-                                        mouseout: (event) => event.target.closePopup(),
-
-
-                                    }}
-                                    >
-                                        
-                                        {/* if(heat === "bitrate"){
-                                            <Popup>{segment.bitrate}</Popup>
-                                        }
-                                        if(heat === "jitter"){
-                                            <Popup>{segment.jitter}</Popup>
-                                        }
-                                        if(heat === "ploss"){
-                                            <Popup>{segment.lost}</Popup>
-                                        } */}
-
-                                    </CircleMarker>
-
-                                );
-                                
-                            })
-                            :
-                            p19_bitrate.map((segment) => {
-                                //if radio button is selected, show the circles
-                                if(heat === "bitrate"){
-                                    color = "hsl(" + (segment.bitrate*15) + ", 100%, 50%)";
-                                    // console.log(segment.bitrate);
-                                } else if(heat === "jitter"){
-                                    color = "hsl(" + ((120 - segment.jitter)) + ", 100%, 50%)";  
-                                    // console.log(segment.jitter);
-                                } else if(heat === "ploss"){ 
-                                    color = "hsl(" + ((120-segment.lost )) + ", 100%, 50%)";
-                                    // console.log(segment.lost);
-                                } else {
-                                    color = "hsl(" + (segment.bitrate*15) + ", 100%, 50%)";
-                                    // console.log(segment.bitrate);
-                                }
-                                
-                                return(
-                                    <CircleMarker center={[segment.lat, segment.long]} radius={2}
-                                    pathOptions={{ color: color }}
-                                    eventHandlers={{
-                                        //check the heat value and show the popup with the right data
-                                        
-                                                                    
-                                        mouseover: (event) => {
-                                            if(heat === "bitrate"){
-                                                event.target.bindPopup("Bitrate: " + segment.bitrate + " kbps").openPopup();
-                                            }
-                                            if(heat === "jitter"){
-                                                event.target.bindPopup("Jitter: " + segment.jitter + " ms").openPopup();
-                                            }
-                                            if(heat === "ploss"){
-                                                event.target.bindPopup("Packet Loss: " + segment.lost + " %").openPopup();
-                                            }
-                                            event.target.openPopup()},
-                                        mouseout: (event) => event.target.closePopup(),
-
-
-                                    }}
-                                    >
-                                        
-                                        {/* if(heat === "bitrate"){
-                                            <Popup>{segment.bitrate}</Popup>
-                                        }
-                                        if(heat === "jitter"){
-                                            <Popup>{segment.jitter}</Popup>
-                                        }
-                                        if(heat === "ploss"){
-                                            <Popup>{segment.lost}</Popup>
-                                        } */}
-
-                                    </CircleMarker>
-
-                                );
-                                
-                            })
-                        }
                         
+                        {
+                            
+                            // post == "p15" ? 
+                            data.map((segment) => {
+                                //if radio button is selected, show the circles
+                                if(heat === "bitrate"){
+                                    color = "hsl(" + (segment.bitrate*15) + ", 100%, 50%)";
+                                    // console.log(segment.bitrate);
+                                } else if(heat === "jitter"){
+                                    let x=120 - segment.jitter
+                                    if(x<0){
+                                        x=0;
+                                    }
+                                    color = "hsl(" + ((x)) + ", 100%, 50%)";  
+                                    // console.log(segment.jitter);
+                                } else if(heat === "ploss"){ 
+                                    let x=120 - segment.lost
+                                    if(x<0){
+                                        x=0;
+                                    }
+                                    color = "hsl(" + ((x)) + ", 100%, 50%)";  
+                                    // console.log(segment.lost);
+                                }
+                                
+                                return(
+                                    <CircleMarker center={[segment.lat, segment.long]} radius={2}
+                                    pathOptions={{ color: color }}
+                                    eventHandlers={{
+                                        //check the heat value and show the popup with the right data
+                                        
+                                                                    
+                                        mouseover: (event) => {
+                                            if(heat === "bitrate"){
+                                                event.target.bindPopup("Bitrate: " + segment.bitrate + " kbps").openPopup();
+                                            }
+                                            if(heat === "jitter"){
+                                                event.target.bindPopup("Jitter: " + segment.jitter + " ms").openPopup();
+                                            }
+                                            if(heat === "ploss"){
+                                                event.target.bindPopup("Packet Loss: " + segment.lost + " %").openPopup();
+                                            }
+                                            event.target.openPopup()},
+                                        mouseout: (event) => event.target.closePopup(),
+
+
+                                    }}
+                                    >
+                                    </CircleMarker>
+
+                                );
+                                
+                            })
+                            // :
+                            // p19.map((segment) => {
+                            //     //if radio button is selected, show the circles
+                            //     if(heat === "bitrate"){
+                            //         color = "hsl(" + (segment.bitrate*15) + ", 100%, 50%)";
+                            //         // console.log(segment.bitrate);
+                            //     } else if(heat === "jitter"){
+                            //         color = "hsl(" + ((120 - segment.jitter)) + ", 100%, 50%)";  
+                            //         // console.log(segment.jitter);
+                            //     } else if(heat === "ploss"){ 
+                            //         color = "hsl(" + ((120-segment.lost )) + ", 100%, 50%)";
+                            //         // console.log(segment.lost);
+                            //     } else {
+                            //         color = "hsl(" + (segment.bitrate*15) + ", 100%, 50%)";
+                            //         // console.log(segment.bitrate);
+                            //     }
+                                
+                            //     return(
+                            //         <CircleMarker center={[segment.lat, segment.long]} radius={2}
+                            //         pathOptions={{ color: color }}
+                            //         eventHandlers={{
+                            //             //check the heat value and show the popup with the right data
+                                        
+                                                                    
+                            //             mouseover: (event) => {
+                            //                 if(heat === "bitrate"){
+                            //                     event.target.bindPopup("Bitrate: " + segment.bitrate + " kbps").openPopup();
+                            //                 }
+                            //                 if(heat === "jitter"){
+                            //                     event.target.bindPopup("Jitter: " + segment.jitter + " ms").openPopup();
+                            //                 }
+                            //                 if(heat === "ploss"){
+                            //                     event.target.bindPopup("Packet Loss: " + segment.lost + " %").openPopup();
+                            //                 }
+                            //                 event.target.openPopup()},
+                            //             mouseout: (event) => event.target.closePopup(),
+
+
+                            //         }}
+                            //         >
+                                     
+                            //         </CircleMarker>
+
+                            //     );
+                                
+                            // })
+                        }
                         <Marker position={p15_coords} icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}>
                             <Popup>
                                 P 15
