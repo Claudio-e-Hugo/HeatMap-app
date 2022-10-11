@@ -10,7 +10,7 @@ export default function App() {
             <div class="row">
                 <div class="col-sm">
                 </div>
-                <div class="col-sm">
+                <div class="col">
                     <Map/>
                 </div>
                 <div class="col-sm">
