@@ -44,6 +44,8 @@ const coords = getLinesFromJson();
 
 const p15 = getP15FromJson();
 const p19 = getP19FromJson();
+const cell = getCellFromJson();
+
 //empty json object
 var color="";
 
@@ -76,7 +78,7 @@ const Puller = styled(Box)(({ theme }) => ({
 function Map(props) {
     
     const [heat, setHeat] = useState("bitrate");
-    const [post, setPost] = useState(["p15"]);
+    const [post, setPost] = useState([]);
     
     useEffect(() => {
         console.log('Heat is now: ', heat);
@@ -107,8 +109,10 @@ function Map(props) {
         data=p15;
     } else if (post == "p19") {
         data=p19;
+    } else if (post == "cell") {
+        data=cell;
     }else{
-        data=p15.concat(p19);
+        data=p15.concat(p19).concat(cell);
     }
 
     // swipe drawer variables
@@ -198,6 +202,12 @@ function Map(props) {
                                                     }
                                                     label="P19"
                                                 />
+                                                <FormControlLabel
+                                                    control={
+                                                    <Checkbox value="cell" onChange={handleChangeCheckBox}/>
+                                                    }
+                                                    label="Cell"
+                                                />
                                             </div>
                                         </StyledBox>
                                     </SwipeableDrawer>
@@ -239,7 +249,6 @@ function Map(props) {
                                                 x=0;
                                             }
                                             color = "hsl(" + ((x)) + ", 100%, 50%)";  
-                                            // console.log(segment.jitter);
                                         } else if(heat === "ploss"){ 
                                             let x=120 - segment.lost
                                             if(x<0){
@@ -315,5 +324,9 @@ function getP19FromJson() {
     return require('../data/data_p19.json');
 }
 
+//loads the cell data from json file
+function getCellFromJson() {
+    return require('../data/data_cell.json');
+}
 
 export default Map;
