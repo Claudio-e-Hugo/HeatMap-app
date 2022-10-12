@@ -1,3 +1,7 @@
 #main-div {
     border-width: 0;
 }
+
+body {
+    overflow-x: hidden;
+}
