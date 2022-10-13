@@ -52,7 +52,7 @@ var color="";
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 // swipe drawer variables
-const drawerBleeding = 56;
+const drawerBleeding = 46;
 
 const Root = styled('div')(({ theme }) => ({
   height: '100%',
@@ -112,7 +112,7 @@ function Map(props) {
     } else if (post == "cell") {
         data=cell;
     }else{
-        data=p15.concat(p19).concat(cell);
+        data=p15.concat(p19);
     }
 
     // swipe drawer variables
@@ -121,6 +121,13 @@ function Map(props) {
   
     const toggleDrawer = (newOpen) => () => {
       setOpen(newOpen);
+      //close drawer on mouse leave
+        
+            
+            // setOpen(false);
+            
+        
+        
     };
   
     // This is used only for the example
@@ -132,17 +139,21 @@ function Map(props) {
                     <div class="row">
                         <div class="col-sm-1">
                             <div class="float-left">
-                                <Root onMouseEnter={toggleDrawer(true)}>
+                                <Root onMouseEnter={toggleDrawer(true)} >
                                     <CssBaseline />
-                                    <Global
+                                    
+                                    <Global                                        
+                                        
                                         styles={{
                                         '.MuiDrawer-root > .MuiPaper-root': {
                                             height: `calc(50% - ${drawerBleeding}px)`,
                                             overflow: 'visible',
+                                            
                                         },
                                         }}
                                     />
                                     <SwipeableDrawer
+                                        
                                         container={container}
                                         anchor="bottom"
                                         open={open}
@@ -150,12 +161,14 @@ function Map(props) {
                                         onOpen={toggleDrawer(true)}
                                         swipeAreaWidth={drawerBleeding}
                                         disableSwipeToOpen={false}
+                                        
                                         ModalProps={{
                                         keepMounted: true,
                                         }}
                                     >
-                                        <StyledBox
+                                        <StyledBox onMouseLeave={toggleDrawer(false)}
                                         sx={{
+                                            
                                             position: 'absolute',
                                             top: -drawerBleeding,
                                             borderTopLeftRadius: 8,
@@ -165,10 +178,11 @@ function Map(props) {
                                             left: 0,
                                         }}
                                         >
-                                        <Puller />
+                                        <Puller  />
                                         <Typography align="center" sx={{ p: 2, color: 'text.secondary'}}><b>Filters</b></Typography>
                                         </StyledBox>
                                         <StyledBox
+                                        onMouseOver={toggleDrawer(true)}
                                         sx={{
                                             px: 2,
                                             pb: 2,
@@ -215,7 +229,7 @@ function Map(props) {
                             </div>
                         </div>
                         <div class="col-sm-8">
-                            <Card  sx={{ minWidth: '80vw', maxHeight: '90vh'}}>
+                            <Card  sx={{     marginBottom:'10rem', minWidth: '80vw', maxHeight: '90vh'}}>
                                 <CardContent>
                                 <MapContainer id="map-container"
                                 center={center}
@@ -240,25 +254,72 @@ function Map(props) {
                                 {
                                     data.map((segment) => {
                                         //if radio button is selected, show the circles
-                                        if(heat === "bitrate"){
-                                            color = "hsl(" + (segment.bitrate*15) + ", 100%, 50%)";
-                                            // console.log(segment.bitrate);
-                                        } else if(heat === "jitter"){
-                                            let x=120 - segment.jitter
-                                            if(x<0){
-                                                x=0;
+                                        if (post==("cell")){
+                                            
+                                            if(heat === "bitrate" ){
+                                                // let x= (120-segment.bitrate);
+                                                console.log("cell");
+                                                console.log((120/segment.bitrate));
+                                                color = "hsl(" +(120/segment.bitrate)*15 + ", 100%, 50%)";
+                                            
+                                            } else if(heat === "jitter"){
+                                                let x=120 - segment.jitter
+                                                if(x<0){
+                                                    x=0;
+                                                }else if(x>120){
+                                                    x=120;
+                                                }
+                                                color = "hsl(" + (x) + ", 100%, 50%)";  
+                                            } else if(heat === "ploss"){ 
+                                                let x=120 - segment.lost
+                                                if(x<0){
+                                                    x=0;
+                                                }else if(x>120){
+                                                    x=120;
+                                                }
+                                                color = "hsl(" + (x) + ", 100%, 50%)";  
+                                                // console.log(segment.lost);
                                             }
-                                            color = "hsl(" + ((x)) + ", 100%, 50%)";  
-                                        } else if(heat === "ploss"){ 
-                                            let x=120 - segment.lost
-                                            if(x<0){
-                                                x=0;
+
+                                        }else{
+                                            if(heat === "bitrate" ){
+                                                // console.log("not cell");
+                                                let x= (segment.bitrate);
+                                                if(x<0){
+                                                    x=0;
+                                                }else if(x>120){
+                                                    x=120;
+                                                }
+                                                color = "hsl(" + (x*15) + ", 100%, 50%)";
+                                                // console.log(segment.bitrate);
+                                            } else if(heat === "jitter"){
+                                                let x=120 - segment.jitter
+                                                if(x<0){
+                                                    x=0;
+                                                }else if(x>120){
+                                                    x=120;
+                                                }
+                                                color = "hsl(" + (x) + ", 100%, 50%)";  
+                                            } else if(heat === "ploss"){ 
+                                                let x=120 - segment.lost
+                                                if(x<0){
+                                                    x=0;
+                                                }else if(x>120){
+                                                    x=120;
+                                                }
+                                                color = "hsl(" + (x) + ", 100%, 50%)";  
+                                                // console.log(segment.lost);
                                             }
-                                            color = "hsl(" + ((x)) + ", 100%, 50%)";  
-                                            // console.log(segment.lost);
-                                        }
+                                        
+                                        }    
+                                        
                                         
                                         return(
+                                            //escalate circles verticaly based on the color
+
+                                        
+                                            
+
                                             <CircleMarker center={[segment.lat, segment.long]} radius={2}
                                             pathOptions={{ color: color }}
                                             eventHandlers={{
