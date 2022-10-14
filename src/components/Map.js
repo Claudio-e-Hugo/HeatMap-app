@@ -96,6 +96,7 @@ function Map(props) {
     const handleChangeCheckBox = (event) => {
         //if check add to post array
         if(event.target.checked){
+            
             setPost([...post, event.target.value]);
         }
         //if uncheck remove from post array
@@ -104,15 +105,40 @@ function Map(props) {
         }
     }
     
-    var data;
-    if (post == "p15") {
-        data=p15;
-    } else if (post == "p19") {
-        data=p19;
-    } else if (post == "cell") {
-        data=cell;
-    }else{
-        data=p15.concat(p19);
+    var data_p15;
+    var data_p19;
+    var data_cell;
+    // if (post == "p15") {
+    //     data_p15=p15;
+    // } else if (post == "p19") {
+    //     data_p19=p19;
+    // } else if (post == "cell") {
+    //     data_cell=cell;
+    // }else{
+    //     data_p15=p15;
+    //     data_p19=p19;
+    //     data_cell=cell;
+    // }
+
+    if (post.includes("p15")) {
+        data_p15=p15;
+    } else {
+        data_p15=null;
+    }
+    if (post.includes("p19")) {
+        data_p19=p19;
+    } else {
+        data_p19=null;
+    }
+    if(post.includes("cell")) {
+        data_cell=cell;
+    } else {
+        data_cell=null;
+    }
+    if (!post.includes("p15") && !post.includes("p19") && !post.includes("cell")){
+        data_p15=p15;
+        data_p19=p19;
+        // data_cell=cell;
     }
 
     // swipe drawer variables
@@ -234,8 +260,8 @@ function Map(props) {
                                 <MapContainer id="map-container"
                                 center={center}
                                 zoom={14}
-                                minZoom={15}
-                                maxZoom={28}
+                                minZoom={16}
+                                maxZoom={19}
                                 style={{width: '100%', height: '82vh', padding: '50'}}
                                 >
                                 <TileLayer
@@ -252,15 +278,20 @@ function Map(props) {
 
                                 
                                 {
-                                    data.map((segment) => {
+                                    data_p15 != null ? 
+                                    data_p15["values"].map((segment) => {
                                         //if radio button is selected, show the circles
-                                        if (post==("cell")){
-                                            
+                                        if (post.includes("cell")){
                                             if(heat === "bitrate" ){
                                                 // let x= (120-segment.bitrate);
-                                                console.log("cell");
-                                                console.log((120/segment.bitrate));
-                                                color = "hsl(" +(120/segment.bitrate)*15 + ", 100%, 50%)";
+                                                // let x = (120/segment.bitreate)*15;
+                                                let x = coloringBitrate(segment.bitrate, true);
+                                                if (x <= 120) {
+                                                    color = "hsl(" + x + ", 100%, 50%)";
+                                                } else {
+                                                    color = "hsl(" + 120 + ", 100%, 50%)";
+                                                    
+                                                }
                                             
                                             } else if(heat === "jitter"){
                                                 let x=120 - segment.jitter
@@ -322,19 +353,20 @@ function Map(props) {
 
                                             <CircleMarker center={[segment.lat, segment.long]} radius={2}
                                             pathOptions={{ color: color }}
+                                            opacity={"15%"}
                                             eventHandlers={{
                                                 //check the heat value and show the popup with the right data
                                                 
                                                                             
                                                 mouseover: (event) => {
                                                     if(heat === "bitrate"){
-                                                        event.target.bindPopup("Bitrate: " + segment.bitrate + " kbps").openPopup();
+                                                        event.target.bindPopup("Bitrate: " + segment.bitrate + " kbps on P15").openPopup();
                                                     }
                                                     if(heat === "jitter"){
-                                                        event.target.bindPopup("Jitter: " + segment.jitter + " ms").openPopup();
+                                                        event.target.bindPopup("Jitter: " + segment.jitter + " ms on P15").openPopup();
                                                     }
                                                     if(heat === "ploss"){
-                                                        event.target.bindPopup("Packet Loss: " + segment.lost + " %").openPopup();
+                                                        event.target.bindPopup("Packet Loss: " + segment.lost + " % on P15").openPopup();
                                                     }
                                                     event.target.openPopup()},
                                                 mouseout: (event) => event.target.closePopup(),
@@ -347,7 +379,219 @@ function Map(props) {
                                         );
                                         
                                     })
+                                    :
+                                    null
                                 }
+                                {
+                                    data_p19 != null ? 
+                                    data_p19["values"].map((segment) => {
+                                        //if radio button is selected, show the circles
+                                        if (post.includes("cell")){
+                                            
+                                            if(heat === "bitrate" ){
+                                                // let x= (120-segment.bitrate);
+                                                let x = coloringBitrate(segment.bitrate, true);
+                                                if (x <= 120) {
+                                                    color = "hsl(" + x + ", 100%, 50%)";
+                                                } else {
+                                                    color = "hsl(" + 120 + ", 100%, 50%)";
+                                                    
+                                                }
+                                            } else if(heat === "jitter"){
+                                                let x=120 - segment.jitter
+                                                if(x<0){
+                                                    x=0;
+                                                }else if(x>120){
+                                                    x=120;
+                                                }
+                                                color = "hsl(" + (x) + ", 100%, 50%)";  
+                                            } else if(heat === "ploss"){ 
+                                                let x=120 - segment.lost
+                                                if(x<0){
+                                                    x=0;
+                                                }else if(x>120){
+                                                    x=120;
+                                                }
+                                                color = "hsl(" + (x) + ", 100%, 50%)";  
+                                                // console.log(segment.lost);
+                                            }
+
+                                        }else{
+                                            if(heat === "bitrate" ){
+                                                // console.log("not cell");
+                                                let x= (segment.bitrate);
+                                                if(x<0){
+                                                    x=0;
+                                                }else if(x>120){
+                                                    x=120;
+                                                }
+                                                color = "hsl(" + (x*15) + ", 100%, 50%)";
+                                                // console.log(segment.bitrate);
+                                            } else if(heat === "jitter"){
+                                                let x=120 - segment.jitter
+                                                if(x<0){
+                                                    x=0;
+                                                }else if(x>120){
+                                                    x=120;
+                                                }
+                                                color = "hsl(" + (x) + ", 100%, 50%)";  
+                                            } else if(heat === "ploss"){ 
+                                                let x=120 - segment.lost
+                                                if(x<0){
+                                                    x=0;
+                                                }else if(x>120){
+                                                    x=120;
+                                                }
+                                                color = "hsl(" + (x) + ", 100%, 50%)";  
+                                                // console.log(segment.lost);
+                                            }
+                                        
+                                        }    
+                                        
+                                        
+                                        return(
+                                            //escalate circles verticaly based on the color
+
+                                        
+                                            
+
+                                            <CircleMarker center={[segment.lat, segment.long]} radius={2}
+                                            pathOptions={{ color: color }}
+                                            opacity={"15%"}
+                                            eventHandlers={{
+                                                //check the heat value and show the popup with the right data
+                                                
+                                                                            
+                                                mouseover: (event) => {
+                                                    if(heat === "bitrate"){
+                                                        event.target.bindPopup("Bitrate: " + segment.bitrate + " kbps on P19").openPopup();
+                                                    }
+                                                    if(heat === "jitter"){
+                                                        event.target.bindPopup("Jitter: " + segment.jitter + " ms on P19").openPopup();
+                                                    }
+                                                    if(heat === "ploss"){
+                                                        event.target.bindPopup("Packet Loss: " + segment.lost + " % on P19").openPopup();
+                                                    }
+                                                    event.target.openPopup()},
+                                                mouseout: (event) => event.target.closePopup(),
+
+
+                                            }}
+                                            >
+                                            </CircleMarker>
+
+                                        );
+                                        
+                                    })
+                                    :
+                                    null
+                                }
+
+                                {
+                                    data_cell != null ? 
+                                    data_cell["values"].map((segment) => {
+                                        //if radio button is selected, show the circles
+                                        if (post.includes("cell")){
+                                            
+                                            if(heat === "bitrate" ){
+                                                // let x= (120-segment.bitrate);
+                                                let x = coloringBitrate(segment.bitrate, true);
+                                                if (x <= 120) {
+                                                    color = "hsl(" + x + ", 100%, 50%)";
+                                                } else {
+                                                    color = "hsl(" + 120 + ", 100%, 50%)";
+                                                    
+                                                }
+                                            } else if(heat === "jitter"){
+                                                let x=120 - segment.jitter
+                                                if(x<0){
+                                                    x=0;
+                                                }else if(x>120){
+                                                    x=120;
+                                                }
+                                                color = "hsl(" + (x) + ", 100%, 50%)";  
+                                            } else if(heat === "ploss"){ 
+                                                let x=120 - segment.lost
+                                                if(x<0){
+                                                    x=0;
+                                                }else if(x>120){
+                                                    x=120;
+                                                }
+                                                color = "hsl(" + (x) + ", 100%, 50%)";  
+                                                // console.log(segment.lost);
+                                            }
+
+                                        }else{
+                                            if(heat === "bitrate" ){
+                                                // console.log("not cell");
+                                                let x= (segment.bitrate);
+                                                if(x<0){
+                                                    x=0;
+                                                }else if(x>120){
+                                                    x=120;
+                                                }
+                                                color = "hsl(" + (x*15) + ", 100%, 50%)";
+                                                // console.log(segment.bitrate);
+                                            } else if(heat === "jitter"){
+                                                let x=120 - segment.jitter
+                                                if(x<0){
+                                                    x=0;
+                                                }else if(x>120){
+                                                    x=120;
+                                                }
+                                                color = "hsl(" + (x) + ", 100%, 50%)";  
+                                            } else if(heat === "ploss"){ 
+                                                let x=120 - segment.lost
+                                                if(x<0){
+                                                    x=0;
+                                                }else if(x>120){
+                                                    x=120;
+                                                }
+                                                color = "hsl(" + (x) + ", 100%, 50%)";  
+                                                // console.log(segment.lost);
+                                            }
+                                        
+                                        }    
+                                        
+                                        
+                                        return(
+                                            //escalate circles verticaly based on the color
+
+                                        
+                                            
+
+                                            <CircleMarker center={[segment.lat, segment.long]} radius={2}
+                                            pathOptions={{ color: color }}
+                                            opacity={"15%"}
+                                            eventHandlers={{
+                                                //check the heat value and show the popup with the right data
+                                                
+                                                                            
+                                                mouseover: (event) => {
+                                                    if(heat === "bitrate"){
+                                                        event.target.bindPopup("Bitrate: " + segment.bitrate + " kbps on Cell").openPopup();
+                                                    }
+                                                    if(heat === "jitter"){
+                                                        event.target.bindPopup("Jitter: " + segment.jitter + " ms on Cell").openPopup();
+                                                    }
+                                                    if(heat === "ploss"){
+                                                        event.target.bindPopup("Packet Loss: " + segment.lost + " % on Cell").openPopup();
+                                                    }
+                                                    event.target.openPopup()},
+                                                mouseout: (event) => event.target.closePopup(),
+
+
+                                            }}
+                                            >
+                                            </CircleMarker>
+
+                                        );
+                                        
+                                    })
+                                    :
+                                    null
+                                }
+
                                 <Marker position={p15_coords} icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}>
                                     <Popup>
                                         P 15
@@ -388,6 +632,26 @@ function getP19FromJson() {
 //loads the cell data from json file
 function getCellFromJson() {
     return require('../data/data_cell.json');
+}
+
+function coloringBitrate(x ,withCell) {
+    if (withCell) {
+        if (x < 1) {
+            return 0;
+        } else if (x >= 1 && x < 5) {
+            return 20;
+        } else if (x >= 5 && x < 10) {
+            return 40;
+        } else if (x >= 10 && x < 15) {
+            return 60;
+        } else if (x >= 15 && x < 20) {
+            return 85
+        } else if (x >= 20 && x < 25) {
+            return 95;
+        } else {
+            return 120;
+        }
+    }
 }
 
 export default Map;
