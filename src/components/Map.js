@@ -16,20 +16,15 @@ import 'leaflet/dist/leaflet.css'
 import markerIconPng from "leaflet/dist/images/marker-icon.png"
 import {Icon} from 'leaflet'
 import '../App.css'
-import '../data/lines1.json'
 import {useEffect, useState} from 'react';
-import { borderRadius, Container } from '@mui/system';
 import Checkbox from '@mui/material/Checkbox';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import PropTypes from 'prop-types';
 import { Global } from '@emotion/react';
 import { styled } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { grey } from '@mui/material/colors';
-import Button from '@mui/material/Button';
-import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 
@@ -40,16 +35,19 @@ const center = [40.6464534, -8.6536617];
 const p15_coords = [40.64416, -8.65616];
 const p19_coords = [40.64339, -8.65847];
 
-const coords = getLinesFromJson();
+// const coords = getLinesFromJson();
 
-const p15 = getP15FromJson();
-const p19 = getP19FromJson();
-const cell = getCellFromJson();
+// const p15 = getP15FromJson();
+// const p19 = getP19FromJson();
+// const cell = getCellFromJson();
+
+
+var p15 = null;
+var p19 = null;
+var cell = null;
 
 //empty json object
 var color="";
-
-const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 // swipe drawer variables
 const drawerBleeding = 46;
@@ -79,6 +77,69 @@ function Map(props) {
     
     const [heat, setHeat] = useState("bitrate");
     const [post, setPost] = useState([]);
+
+    const [coords, setCoords] = useState({}); 
+
+    useEffect(() => {
+        fetch('/get_lines', {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(response => 
+            response.json().then(data => {
+                console.log(data);
+                setCoords(data);
+            })
+        );
+    }, []);
+
+    useEffect(() => {
+        const arg = {"post" : "p15"};
+        fetch('/get_json/', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(arg)
+        }).then(response => 
+            response.json().then(data => {
+                p15 = data;
+            })
+        );
+    }, []);
+
+    useEffect(() => {
+        const arg = {"post" : "p19"};
+        
+        fetch('/get_json/', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(arg)
+        }).then(response => 
+            response.json().then(data => {
+                p19 = data;
+            })
+        );
+    })
+
+    useEffect(() => {
+        const arg = {"post" : "cell"};
+        
+        fetch('/get_json/', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(arg)
+        }).then(response => 
+            response.json().then(data => {
+                cell = data;
+            })
+        );
+    })
     
     useEffect(() => {
         console.log('Heat is now: ', heat);
@@ -90,13 +151,11 @@ function Map(props) {
 
     const handleChange = (event) => {
         setHeat(event.target.value);
-        // console.log(heat);
     }
 
     const handleChangeCheckBox = (event) => {
         //if check add to post array
         if(event.target.checked){
-            
             setPost([...post, event.target.value]);
         }
         //if uncheck remove from post array
@@ -108,17 +167,6 @@ function Map(props) {
     var data_p15;
     var data_p19;
     var data_cell;
-    // if (post == "p15") {
-    //     data_p15=p15;
-    // } else if (post == "p19") {
-    //     data_p19=p19;
-    // } else if (post == "cell") {
-    //     data_cell=cell;
-    // }else{
-    //     data_p15=p15;
-    //     data_p19=p19;
-    //     data_cell=cell;
-    // }
 
     if (post.includes("p15")) {
         data_p15=p15;
@@ -138,7 +186,6 @@ function Map(props) {
     if (!post.includes("p15") && !post.includes("p19") && !post.includes("cell")){
         data_p15=p15;
         data_p19=p19;
-        // data_cell=cell;
     }
 
     // swipe drawer variables
@@ -147,13 +194,6 @@ function Map(props) {
   
     const toggleDrawer = (newOpen) => () => {
       setOpen(newOpen);
-      //close drawer on mouse leave
-        
-            
-            // setOpen(false);
-            
-        
-        
     };
   
     // This is used only for the example
@@ -279,7 +319,7 @@ function Map(props) {
                                 
                                 {
                                     data_p15 != null ? 
-                                    data_p15["values"].map((segment) => {
+                                    data_p15.map((segment) => {
                                         //if radio button is selected, show the circles
                                         if (post.includes("cell")){
                                             if(heat === "bitrate" ){
@@ -384,12 +424,11 @@ function Map(props) {
                                 }
                                 {
                                     data_p19 != null ? 
-                                    data_p19["values"].map((segment) => {
+                                    data_p19.map((segment) => {
                                         //if radio button is selected, show the circles
                                         if (post.includes("cell")){
                                             
                                             if(heat === "bitrate" ){
-                                                // let x= (120-segment.bitrate);
                                                 let x = coloringBitrate(segment.bitrate, true);
                                                 if (x <= 120) {
                                                     color = "hsl(" + x + ", 100%, 50%)";
@@ -413,12 +452,10 @@ function Map(props) {
                                                     x=120;
                                                 }
                                                 color = "hsl(" + (x) + ", 100%, 50%)";  
-                                                // console.log(segment.lost);
                                             }
 
                                         }else{
                                             if(heat === "bitrate" ){
-                                                // console.log("not cell");
                                                 let x= (segment.bitrate);
                                                 if(x<0){
                                                     x=0;
@@ -426,7 +463,6 @@ function Map(props) {
                                                     x=120;
                                                 }
                                                 color = "hsl(" + (x*15) + ", 100%, 50%)";
-                                                // console.log(segment.bitrate);
                                             } else if(heat === "jitter"){
                                                 let x=120 - segment.jitter
                                                 if(x<0){
@@ -443,7 +479,6 @@ function Map(props) {
                                                     x=120;
                                                 }
                                                 color = "hsl(" + (x) + ", 100%, 50%)";  
-                                                // console.log(segment.lost);
                                             }
                                         
                                         }    
@@ -489,12 +524,11 @@ function Map(props) {
 
                                 {
                                     data_cell != null ? 
-                                    data_cell["values"].map((segment) => {
+                                    data_cell.map((segment) => {
                                         //if radio button is selected, show the circles
                                         if (post.includes("cell")){
                                             
                                             if(heat === "bitrate" ){
-                                                // let x= (120-segment.bitrate);
                                                 let x = coloringBitrate(segment.bitrate, true);
                                                 if (x <= 120) {
                                                     color = "hsl(" + x + ", 100%, 50%)";
@@ -518,12 +552,10 @@ function Map(props) {
                                                     x=120;
                                                 }
                                                 color = "hsl(" + (x) + ", 100%, 50%)";  
-                                                // console.log(segment.lost);
                                             }
 
                                         }else{
                                             if(heat === "bitrate" ){
-                                                // console.log("not cell");
                                                 let x= (segment.bitrate);
                                                 if(x<0){
                                                     x=0;
@@ -531,7 +563,6 @@ function Map(props) {
                                                     x=120;
                                                 }
                                                 color = "hsl(" + (x*15) + ", 100%, 50%)";
-                                                // console.log(segment.bitrate);
                                             } else if(heat === "jitter"){
                                                 let x=120 - segment.jitter
                                                 if(x<0){
@@ -548,7 +579,6 @@ function Map(props) {
                                                     x=120;
                                                 }
                                                 color = "hsl(" + (x) + ", 100%, 50%)";  
-                                                // console.log(segment.lost);
                                             }
                                         
                                         }    
@@ -556,10 +586,7 @@ function Map(props) {
                                         
                                         return(
                                             //escalate circles verticaly based on the color
-
                                         
-                                            
-
                                             <CircleMarker center={[segment.lat, segment.long]} radius={2}
                                             pathOptions={{ color: color }}
                                             opacity={"15%"}
@@ -614,31 +641,32 @@ function Map(props) {
     );
 }
 
-// loads the street data from json file
-function getLinesFromJson() {
-    return require('../data/lines1.json');
-}
+// // loads the street data from json file
+// function getLinesFromJson() {
+//     return require('../data/lines1.json');
+// }
 
-//loads the p15 data from json file
-function getP15FromJson() {
-    return require('../data/data_p15.json');
-}
+// //loads the p15 data from json file
+// function getP15FromJson() {
+//     return require('../data/data_p15.json');
+// }
 
-//loads the p19 data from json file
-function getP19FromJson() {
-    return require('../data/data_p19.json');
-}
+// //loads the p19 data from json file
+// function getP19FromJson() {
+//     return require('../data/data_p19.json');
+// }
 
-//loads the cell data from json file
-function getCellFromJson() {
-    return require('../data/data_cell.json');
-}
+// //loads the cell data from json file
+// function getCellFromJson() {
+//     return require('../data/data_cell.json');
+// }
 
 function coloringBitrate(x ,withCell) {
     if (withCell) {
         if (x < 1) {
-            return 0;
-        } else if (x >= 1 && x < 5) {
+                                        
+                                            
+
             return 20;
         } else if (x >= 5 && x < 10) {
             return 40;
