@@ -68,11 +68,10 @@ const Puller = styled(Box)(({ theme }) => ({
 }));
 
 
-function Map(props) {
+function Map({selectedheat}) {
+    console.log({selectedheat});
     
-    const [heat, setHeat] = useState("bitrate");
     const [post, setPost] = useState([]);
-
     const [coords, setCoords] = useState({}); 
 
     useEffect(() => {
@@ -150,28 +149,6 @@ function Map(props) {
     //     );
     // })
     
-    useEffect(() => {
-        console.log('Heat is now: ', heat);
-    }, [heat]);
-
-    useEffect(() => {
-        console.log('Post is now: ', post);
-    }, [post]);
-
-    const handleChange = (event) => {
-        setHeat(event.target.value);
-    }
-
-    const handleChangeCheckBox = (event) => {
-        //if check add to post array
-        if(event.target.checked){
-            setPost([...post, event.target.value]);
-        }
-        //if uncheck remove from post array
-        else{
-            setPost(post.filter(item => item !== event.target.value));
-        }
-    }
     
     var data_p15;
     var data_p19;
@@ -198,12 +175,7 @@ function Map(props) {
     }
 
     // swipe drawer variables
-    const { window } = props;
-    const [open, setOpen] = React.useState(false);
-  
-    const toggleDrawer = (newOpen) => () => {
-      setOpen(newOpen);
-    };
+    
   
     // This is used only for the example
     const container = window !== undefined ? () => window().document.body : undefined;
@@ -214,93 +186,7 @@ function Map(props) {
                     <div class="row">
                         <div class="col-sm-1">
                             <div class="float-left">
-                                <Root onMouseEnter={toggleDrawer(true)} >
-                                    <CssBaseline />
-                                    
-                                    <Global                                        
-                                        
-                                        styles={{
-                                        '.MuiDrawer-root > .MuiPaper-root': {
-                                            height: `calc(50% - ${drawerBleeding}px)`,
-                                            overflow: 'visible',
-                                            
-                                        },
-                                        }}
-                                    />
-                                    <SwipeableDrawer
-                                        
-                                        container={container}
-                                        anchor="bottom"
-                                        open={open}
-                                        onClose={toggleDrawer(false)}
-                                        onOpen={toggleDrawer(true)}
-                                        swipeAreaWidth={drawerBleeding}
-                                        disableSwipeToOpen={false}
-                                        
-                                        ModalProps={{
-                                        keepMounted: true,
-                                        }}
-                                    >
-                                        <StyledBox onMouseLeave={toggleDrawer(false)}
-                                        sx={{
-                                            
-                                            position: 'absolute',
-                                            top: -drawerBleeding,
-                                            borderTopLeftRadius: 8,
-                                            borderTopRightRadius: 8,
-                                            visibility: 'visible',
-                                            right: 0,
-                                            left: 0,
-                                        }}
-                                        >
-                                        <Puller  />
-                                        <Typography align="center" sx={{ p: 2, color: 'text.secondary'}}><b>Filters</b></Typography>
-                                        </StyledBox>
-                                        <StyledBox
-                                        onMouseOver={toggleDrawer(true)}
-                                        sx={{
-                                            px: 2,
-                                            pb: 2,
-                                            height: '100%',
-                                            overflow: 'auto',
-                                        }}
-                                        >
-                                            
-                                            <FormControl>
-                                                <FormLabel id="info">Filters</FormLabel>
-                                                <RadioGroup
-                                                    aria-labelledby="demo-radio-buttons-group-label"
-                                                    defaultValue="bitrate"
-                                                    name="radio-buttons-group"
-                                                >
-                                                    <FormControlLabel onChange={handleChange} value="bitrate" control={<Radio />} label="BitRate" />
-                                                    <FormControlLabel onChange={handleChange} value="jitter"  control={<Radio />} label="Jitter" />
-                                                    <FormControlLabel onChange={handleChange} value="ploss"   control={<Radio />} label="Packet Loss" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <div>
-                                                <FormControlLabel
-                                                    control={
-                                                    <Checkbox value="p15" onChange={handleChangeCheckBox}/>
-                                                    }
-                                                    label="P15"
-                                                />
-                                                <FormControlLabel
-                                                    control={
-                                                    <Checkbox value="p19" onChange={handleChangeCheckBox}/>
-                                                    }
-                                                    label="P19"
-                                                />
-                                                <FormControlLabel
-                                                    control={
-                                                    <Checkbox value="cell" onChange={handleChangeCheckBox}/>
-                                                    }
-                                                    label="Cell"
-                                                />
-                                            </div>
-                                        </StyledBox>
-                                    </SwipeableDrawer>
-                                </Root>
+                                
                             </div>
                         </div>
                         <div class="col-sm-8">
@@ -317,14 +203,14 @@ function Map(props) {
                                     url='https://api.maptiler.com/maps/basic-v2/256/{z}/{x}/{y}.png?key=GCrdp2KFceg0vK7Ifepx'
                                 />
 
-                                {/* {
+                                {
                                     Object.keys(coords).map((street) => {
                                        
                                         return(
                                             <Polyline key={street} color={"black"} opacity={"50%"} positions={coords[street]}></Polyline>
                                         );
                                     })
-                                } */}
+                                }
 
                                 {
                                     data_p15 != null ? 
@@ -337,8 +223,8 @@ function Map(props) {
 
                                         //if radio button is selected, show the circles
                                         if (post.includes("cell")){
-                                            console.log("INCLUDES CELL");
-                                            if(heat === "bitrate" ){
+                                            // console.log("INCLUDES CELL");
+                                            if(selectedheat === "bitrate" ){
                                                 // let x= (120-segment.bitrate);
                                                 // let x = (120/segment.bitreate)*15;
                                                 let x = coloringBitrate(segment.bitrate, true);
@@ -349,7 +235,7 @@ function Map(props) {
                                                     
                                                 }
                                             
-                                            } else if(heat === "jitter"){
+                                            } else if(selectedheat === "jitter"){
                                                 let x=120 - segment.jitter
                                                 if(x<0){
                                                     x=0;
@@ -357,7 +243,7 @@ function Map(props) {
                                                     x=120;
                                                 }
                                                 color = "hsl(" + (x) + ", 100%, 50%)";  
-                                            } else if(heat === "ploss"){ 
+                                            } else if(selectedheat === "ploss"){ 
                                                 let x=120 - segment.lost
                                                 if(x<0){
                                                     x=0;
@@ -369,8 +255,8 @@ function Map(props) {
                                             }
 
                                         }else{
-                                            console.log("DOES NOT CONTAIN");
-                                            if(heat === "bitrate" ){
+                                     
+                                            if(selectedheat === "bitrate" ){
                                                 let x= (values.bitrate);
                                                 if(x<0){
                                                     x=0;
@@ -378,9 +264,10 @@ function Map(props) {
                                                     x=120;
                                                 }
                                                 color = "hsl(" + (x*20) + ", 100%, 50%)";
-                                                console.log(color);
+                                                
+
                                                 // console.log(segment.bitrate);
-                                            } else if(heat === "jitter"){
+                                            } else if(selectedheat === "jitter"){
                                                 let x=120 - segment.jitter
                                                 if(x<0){
                                                     x=0;
@@ -388,7 +275,7 @@ function Map(props) {
                                                     x=120;
                                                 }
                                                 color = "hsl(" + (x) + ", 100%, 50%)";  
-                                            } else if(heat === "ploss"){ 
+                                            } else if(selectedheat === "ploss"){ 
                                                 let x=120 - segment.lost
                                                 if(x<0){
                                                     x=0;
@@ -408,13 +295,13 @@ function Map(props) {
                                                     
                                                                                 
                                                     mouseover: (event) => {
-                                                        if(heat === "bitrate"){
+                                                        if(selectedheat === "bitrate"){
                                                             event.target.bindPopup("Bitrate: " + values.bitrate + " kbps on P15").openPopup();
                                                         }
-                                                        if(heat === "jitter"){
+                                                        if(selectedheat === "jitter"){
                                                             event.target.bindPopup("Jitter: " + segment.jitter + " ms on P15").openPopup();
                                                         }
-                                                        if(heat === "ploss"){
+                                                        if(selectedheat === "ploss"){
                                                             event.target.bindPopup("Packet Loss: " + segment.lost + " % on P15").openPopup();
                                                         }
                                                         event.target.openPopup()},
@@ -429,7 +316,7 @@ function Map(props) {
                                     null
                                 }
 
-{/*                                 
+                                {/*                                 
                                 {
                                     data_p15 != null ? 
                                     data_p15.map((segment) => {
