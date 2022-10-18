@@ -37,11 +37,6 @@ const p19_coords = [40.64339, -8.65847];
 
 // const coords = getLinesFromJson();
 
-// const p15 = getP15FromJson();
-// const p19 = getP19FromJson();
-// const cell = getCellFromJson();
-
-
 var p15 = null;
 var p19 = null;
 var cell = null;
@@ -88,15 +83,14 @@ function Map(props) {
             }
         }).then(response => 
             response.json().then(data => {
-                console.log(data);
                 setCoords(data);
             })
         );
     }, []);
 
     useEffect(() => {
-        const arg = {"post" : "p15"};
-        fetch('/get_json/', {
+        const arg = {"post": "p15"};
+        fetch('/handle_segments', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -109,37 +103,52 @@ function Map(props) {
         );
     }, []);
 
-    useEffect(() => {
-        const arg = {"post" : "p19"};
-        
-        fetch('/get_json/', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(arg)
-        }).then(response => 
-            response.json().then(data => {
-                p19 = data;
-            })
-        );
-    })
+    // useEffect(() => {
+    //     const arg = {"post" : "p15"};
+    //     fetch('/get_json/', {
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "application/json"
+    //         },
+    //         body: JSON.stringify(arg)
+    //     }).then(response => 
+    //         response.json().then(data => {
+    //             p15 = data;
+    //         })
+    //     );
+    // }, []);
 
-    useEffect(() => {
-        const arg = {"post" : "cell"};
+    // useEffect(() => {
+    //     const arg = {"post" : "p19"};
         
-        fetch('/get_json/', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(arg)
-        }).then(response => 
-            response.json().then(data => {
-                cell = data;
-            })
-        );
-    })
+    //     fetch('/get_json/', {
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "application/json"
+    //         },
+    //         body: JSON.stringify(arg)
+    //     }).then(response => 
+    //         response.json().then(data => {
+    //             p19 = data;
+    //         })
+    //     );
+    // })
+
+    // useEffect(() => {
+    //     const arg = {"post" : "cell"};
+        
+    //     fetch('/get_json/', {
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "application/json"
+    //         },
+    //         body: JSON.stringify(arg)
+    //     }).then(response => 
+    //         response.json().then(data => {
+    //             cell = data;
+    //         })
+    //     );
+    // })
     
     useEffect(() => {
         console.log('Heat is now: ', heat);
@@ -185,7 +194,7 @@ function Map(props) {
     }
     if (!post.includes("p15") && !post.includes("p19") && !post.includes("cell")){
         data_p15=p15;
-        data_p19=p19;
+        // data_p19=p19;
     }
 
     // swipe drawer variables
@@ -308,15 +317,119 @@ function Map(props) {
                                     url='https://api.maptiler.com/maps/basic-v2/256/{z}/{x}/{y}.png?key=GCrdp2KFceg0vK7Ifepx'
                                 />
 
-                                {
+                                {/* {
                                     Object.keys(coords).map((street) => {
+                                       
                                         return(
                                             <Polyline key={street} color={"black"} opacity={"50%"} positions={coords[street]}></Polyline>
                                         );
                                     })
+                                } */}
+
+                                {
+                                    data_p15 != null ? 
+                                    Object.keys(data_p15).map((segment) => {
+                                        
+                                        var aux = segment.replace('[[', '').replace(']]', '').replace('[', '').replace(']', '').split(",").map(Number);
+                                        aux = [[ [aux[0], aux[1]], [aux[2], aux[3]] ]];
+                                        
+                                        var values = data_p15[segment];
+
+                                        //if radio button is selected, show the circles
+                                        if (post.includes("cell")){
+                                            console.log("INCLUDES CELL");
+                                            if(heat === "bitrate" ){
+                                                // let x= (120-segment.bitrate);
+                                                // let x = (120/segment.bitreate)*15;
+                                                let x = coloringBitrate(segment.bitrate, true);
+                                                if (x <= 120) {
+                                                    color = "hsl(" + x + ", 100%, 50%)";
+                                                } else {
+                                                    color = "hsl(" + 120 + ", 100%, 50%)";
+                                                    
+                                                }
+                                            
+                                            } else if(heat === "jitter"){
+                                                let x=120 - segment.jitter
+                                                if(x<0){
+                                                    x=0;
+                                                }else if(x>120){
+                                                    x=120;
+                                                }
+                                                color = "hsl(" + (x) + ", 100%, 50%)";  
+                                            } else if(heat === "ploss"){ 
+                                                let x=120 - segment.lost
+                                                if(x<0){
+                                                    x=0;
+                                                }else if(x>120){
+                                                    x=120;
+                                                }
+                                                color = "hsl(" + (x) + ", 100%, 50%)";  
+                                                // console.log(segment.lost);
+                                            }
+
+                                        }else{
+                                            console.log("DOES NOT CONTAIN");
+                                            if(heat === "bitrate" ){
+                                                let x= (values.bitrate);
+                                                if(x<0){
+                                                    x=0;
+                                                }else if(x>120){
+                                                    x=120;
+                                                }
+                                                color = "hsl(" + (x*20) + ", 100%, 50%)";
+                                                console.log(color);
+                                                // console.log(segment.bitrate);
+                                            } else if(heat === "jitter"){
+                                                let x=120 - segment.jitter
+                                                if(x<0){
+                                                    x=0;
+                                                }else if(x>120){
+                                                    x=120;
+                                                }
+                                                color = "hsl(" + (x) + ", 100%, 50%)";  
+                                            } else if(heat === "ploss"){ 
+                                                let x=120 - segment.lost
+                                                if(x<0){
+                                                    x=0;
+                                                }else if(x>120){
+                                                    x=120;
+                                                }
+                                                color = "hsl(" + (x) + ", 100%, 50%)";  
+                                                // console.log(segment.lost);
+                                            }
+                                        
+                                        }
+                                        
+                                        return (
+                                            <Polyline key={segment} pathOptions={{ color: color }} positions={aux}
+                                                eventHandlers={{
+                                                    //check the heat value and show the popup with the right data
+                                                    
+                                                                                
+                                                    mouseover: (event) => {
+                                                        if(heat === "bitrate"){
+                                                            event.target.bindPopup("Bitrate: " + values.bitrate + " kbps on P15").openPopup();
+                                                        }
+                                                        if(heat === "jitter"){
+                                                            event.target.bindPopup("Jitter: " + segment.jitter + " ms on P15").openPopup();
+                                                        }
+                                                        if(heat === "ploss"){
+                                                            event.target.bindPopup("Packet Loss: " + segment.lost + " % on P15").openPopup();
+                                                        }
+                                                        event.target.openPopup()},
+                                                    mouseout: (event) => event.target.closePopup(),
+
+
+                                                }}
+                                            />
+                                        );
+                                    })
+                                    :
+                                    null
                                 }
 
-                                
+{/*                                 
                                 {
                                     data_p15 != null ? 
                                     data_p15.map((segment) => {
@@ -617,7 +730,7 @@ function Map(props) {
                                     })
                                     :
                                     null
-                                }
+                                } */}
 
                                 <Marker position={p15_coords} icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}>
                                     <Popup>
