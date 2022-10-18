@@ -68,8 +68,8 @@ const Puller = styled(Box)(({ theme }) => ({
 }));
 
 
-function Map({selectedheat}) {
-    console.log({selectedheat});
+function Map({selectedHeat}) {
+    console.log({selectedHeat});
     
     const [post, setPost] = useState([]);
     const [coords, setCoords] = useState({}); 
@@ -224,7 +224,7 @@ function Map({selectedheat}) {
                                         //if radio button is selected, show the circles
                                         if (post.includes("cell")){
                                             // console.log("INCLUDES CELL");
-                                            if(selectedheat === "bitrate" ){
+                                            if(selectedHeat === "bitrate" ){
                                                 // let x= (120-segment.bitrate);
                                                 // let x = (120/segment.bitreate)*15;
                                                 let x = coloringBitrate(segment.bitrate, true);
@@ -235,7 +235,7 @@ function Map({selectedheat}) {
                                                     
                                                 }
                                             
-                                            } else if(selectedheat === "jitter"){
+                                            } else if(selectedHeat === "jitter"){
                                                 let x=120 - segment.jitter
                                                 if(x<0){
                                                     x=0;
@@ -243,7 +243,7 @@ function Map({selectedheat}) {
                                                     x=120;
                                                 }
                                                 color = "hsl(" + (x) + ", 100%, 50%)";  
-                                            } else if(selectedheat === "ploss"){ 
+                                            } else if(selectedHeat === "ploss"){ 
                                                 let x=120 - segment.lost
                                                 if(x<0){
                                                     x=0;
@@ -256,7 +256,7 @@ function Map({selectedheat}) {
 
                                         }else{
                                      
-                                            if(selectedheat === "bitrate" ){
+                                            if(selectedHeat === "bitrate" ){
                                                 let x= (values.bitrate);
                                                 if(x<0){
                                                     x=0;
@@ -267,7 +267,7 @@ function Map({selectedheat}) {
                                                 
 
                                                 // console.log(segment.bitrate);
-                                            } else if(selectedheat === "jitter"){
+                                            } else if(selectedHeat === "jitter"){
                                                 let x=120 - segment.jitter
                                                 if(x<0){
                                                     x=0;
@@ -275,7 +275,7 @@ function Map({selectedheat}) {
                                                     x=120;
                                                 }
                                                 color = "hsl(" + (x) + ", 100%, 50%)";  
-                                            } else if(selectedheat === "ploss"){ 
+                                            } else if(selectedHeat === "ploss"){ 
                                                 let x=120 - segment.lost
                                                 if(x<0){
                                                     x=0;
@@ -295,13 +295,13 @@ function Map({selectedheat}) {
                                                     
                                                                                 
                                                     mouseover: (event) => {
-                                                        if(selectedheat === "bitrate"){
+                                                        if(selectedHeat === "bitrate"){
                                                             event.target.bindPopup("Bitrate: " + values.bitrate + " kbps on P15").openPopup();
                                                         }
-                                                        if(selectedheat === "jitter"){
+                                                        if(selectedHeat === "jitter"){
                                                             event.target.bindPopup("Jitter: " + segment.jitter + " ms on P15").openPopup();
                                                         }
-                                                        if(selectedheat === "ploss"){
+                                                        if(selectedHeat === "ploss"){
                                                             event.target.bindPopup("Packet Loss: " + segment.lost + " % on P15").openPopup();
                                                         }
                                                         event.target.openPopup()},

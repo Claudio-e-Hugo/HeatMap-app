@@ -61,7 +61,7 @@ const Puller = styled(Box)(({ theme }) => ({
 }));
 
 
-function Filter(props,{setselectedHeat}) {
+function Filter(props) {
     
     const [heat, setHeat] = useState("bitrate");
     const [post, setPost] = useState([]);
@@ -155,8 +155,7 @@ function Filter(props,{setselectedHeat}) {
     const handleChange = (event) => {
         setHeat(event.target.value);
         console.log("Heat is now: ", event.target.value);
-        setselectedHeat(event.target.value);
-        
+        props.setSelectedHeat(event.target.value);
     }
 
     const handleChangeCheckBox = (event) => {
