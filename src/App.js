@@ -8,7 +8,7 @@ import Filter from './components/Filter';
 
 export default function App() {
     const [selectedDataType, setSelectedDataType] = useState('bitrate');
-    const [post, setPost] = useState(['p15']);
+    const [post, setPost] = useState([]);
     const [mode, setMode] = useState('segmented');
 
     return (
