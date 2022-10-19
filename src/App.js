@@ -3,7 +3,7 @@ import Map from './components/Map';
 import './App.css';
 import NavBar from './components/NavBar';
 import Filter from './components/Filter';
-
+import { Component } from "react";
 
 
 export default function App() {
