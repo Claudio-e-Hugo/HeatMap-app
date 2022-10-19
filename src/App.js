@@ -7,11 +7,9 @@ import Filter from './components/Filter';
 
 
 export default function App() {
-const [selectedHeat, setSelectedHeat] = useState('bitrate');
-const [data, setData] = React.useState(null);
-    useEffect(() => {
-        console.log(selectedHeat);
-    }, [selectedHeat])
+    const [selectedDataType, setSelectedDataType] = useState('bitrate');
+    const [post, setPost] = useState(['p15']);
+    const [mode, setMode] = useState('segmented');
 
     return (
         <div class="main-div"
@@ -25,8 +23,8 @@ const [data, setData] = React.useState(null);
                 </div>
                 <div class="row">
                     <div class="col">
-                        <Filter setSelectedHeat={setSelectedHeat}/>
-                        <Map selectedHeat={selectedHeat}/>
+                        <Filter setSelectedDataType={setSelectedDataType} setPost={setPost} post={post} setMode={setMode} />
+                        <Map selectedDataType={selectedDataType} post={post} mode={mode} />
                     </div>
                 </div>
             </div>

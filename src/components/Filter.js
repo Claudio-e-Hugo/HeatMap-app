@@ -1,41 +1,21 @@
 import React from 'react';
-import {
-    MapContainer,
-    Polyline,
-    Popup,
-    TileLayer,
-    Marker,
-    CircleMarker
-} from 'react-leaflet';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import 'leaflet/dist/leaflet.css'
-import markerIconPng from "leaflet/dist/images/marker-icon.png"
-import {Icon} from 'leaflet'
 import '../App.css'
-import {useEffect, useState} from 'react';
 import Checkbox from '@mui/material/Checkbox';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import { Global } from '@emotion/react';
 import { styled } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { grey } from '@mui/material/colors';
 import Typography from '@mui/material/Typography';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
-
-// const coords = getLinesFromJson();
-
-var p15 = null;
-var p19 = null;
-var cell = null;
-
-//empty json object
-var color="";
+import Switch from '@mui/material/Switch';
+import FormGroup from '@mui/material/FormGroup';
 
 // swipe drawer variables
 const drawerBleeding = 46;
@@ -62,135 +42,29 @@ const Puller = styled(Box)(({ theme }) => ({
 
 
 function Filter(props) {
-    
-    const [heat, setHeat] = useState("bitrate");
-    const [post, setPost] = useState([]);
-
-    const [coords, setCoords] = useState({}); 
-
-    // useEffect(() => {
-    //     fetch('/get_lines', {
-    //         method: "GET",
-    //         headers: {
-    //             "Content-Type": "application/json"
-    //         }
-    //     }).then(response => 
-    //         response.json().then(data => {
-    //             setCoords(data);
-    //         })
-    //     );
-    // }, []);
-
-    useEffect(() => {
-        const arg = {"post": "p15"};
-        fetch('/handle_segments', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(arg)
-        }).then(response => 
-            response.json().then(data => {
-                p15 = data;
-            })
-        );
-    }, []);
-
-    // useEffect(() => {
-    //     const arg = {"post" : "p15"};
-    //     fetch('/get_json/', {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "application/json"
-    //         },
-    //         body: JSON.stringify(arg)
-    //     }).then(response => 
-    //         response.json().then(data => {
-    //             p15 = data;
-    //         })
-    //     );
-    // }, []);
-
-    // useEffect(() => {
-    //     const arg = {"post" : "p19"};
-        
-    //     fetch('/get_json/', {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "application/json"
-    //         },
-    //         body: JSON.stringify(arg)
-    //     }).then(response => 
-    //         response.json().then(data => {
-    //             p19 = data;
-    //         })
-    //     );
-    // })
-
-    // useEffect(() => {
-    //     const arg = {"post" : "cell"};
-        
-    //     fetch('/get_json/', {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "application/json"
-    //         },
-    //         body: JSON.stringify(arg)
-    //     }).then(response => 
-    //         response.json().then(data => {
-    //             cell = data;
-    //         })
-    //     );
-    // })
-    
-    useEffect(() => {
-        // console.log('Heat is now: ', heat);
-        
-    }, [heat]);
-
-    useEffect(() => {
-        console.log('Post is now: ', post);
-    }, [post]);
 
     const handleChange = (event) => {
-        setHeat(event.target.value);
-        console.log("Heat is now: ", event.target.value);
-        props.setSelectedHeat(event.target.value);
+        // props.setDataType(event.target.value);
+        props.setSelectedDataType(event.target.value);
     }
 
     const handleChangeCheckBox = (event) => {
         //if check add to post array
         if(event.target.checked){
-            setPost([...post, event.target.value]);
+            props.setPost([...props.post, event.target.value]);
         }
         //if uncheck remove from post array
         else{
-            setPost(post.filter(item => item !== event.target.value));
+            props.setPost(props.post.filter(item => item !== event.target.value));
         }
     }
-    
-    var data_p15;
-    var data_p19;
-    var data_cell;
 
-    if (post.includes("p15")) {
-        data_p15=p15;
-    } else {
-        data_p15=null;
-    }
-    if (post.includes("p19")) {
-        data_p19=p19;
-    } else {
-        data_p19=null;
-    }
-    if(post.includes("cell")) {
-        data_cell=cell;
-    } else {
-        data_cell=null;
-    }
-    if (!post.includes("p15") && !post.includes("p19") && !post.includes("cell")){
-        data_p15=p15;
-        // data_p19=p19;
+    const handleSwitchChange = (event) => {
+        if(event.target.checked) {
+            props.setMode('segmented');
+        } else {
+            props.setMode('coordinates');
+        }
     }
 
     // swipe drawer variables
@@ -293,6 +167,11 @@ function Filter(props) {
                                                     }
                                                     label="Cell"
                                                 />
+                                            </div>
+                                            <div>
+                                            <FormGroup>
+                                                <FormControlLabel control={<Switch onChange={handleSwitchChange} defaultChecked />} label="Mode" />
+                                            </FormGroup>
                                             </div>
                                         </StyledBox>
                                     </SwipeableDrawer>
