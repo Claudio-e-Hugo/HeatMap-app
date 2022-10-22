@@ -59,6 +59,17 @@ function Filter(props) {
         }
     }
 
+    const handleChangeBestMode = (event) => {
+        if(event.target.checked){
+            props.setBestMode(true);
+
+        } else {
+            props.setBestMode(false);
+        }
+        console.log(props.bestMode);
+
+    }
+
     const handleSwitchChange = (event) => {
         if(event.target.checked) {
             props.setMode('segmented');
@@ -171,6 +182,14 @@ function Filter(props) {
                                             <div>
                                             <FormGroup>
                                                 <FormControlLabel control={<Switch onChange={handleSwitchChange} defaultChecked />} label="Mode" />
+                                            </FormGroup>
+                                            <FormGroup>
+                                                <FormControlLabel
+                                                    control={
+                                                    <Checkbox value="best_mode" onChange={handleChangeBestMode}/>
+                                                    }
+                                                    label="Best Mode"
+                                                />
                                             </FormGroup>
                                             </div>
                                         </StyledBox>

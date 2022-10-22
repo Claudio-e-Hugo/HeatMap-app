@@ -10,6 +10,7 @@ export default function App() {
     const [selectedDataType, setSelectedDataType] = useState('bitrate');
     const [post, setPost] = useState([]);
     const [mode, setMode] = useState('segmented');
+    const [bestMode, setBestMode] = useState(false);
 
     return (
         <div class="main-div"
@@ -23,8 +24,8 @@ export default function App() {
                 </div>
                 <div class="row">
                     <div class="col">
-                        <Filter setSelectedDataType={setSelectedDataType} setPost={setPost} post={post} setMode={setMode} />
-                        <Map selectedDataType={selectedDataType} post={post} mode={mode} />
+                        <Filter setSelectedDataType={setSelectedDataType} setPost={setPost} post={post} setMode={setMode} setBestMode={setBestMode} />
+                        <Map selectedDataType={selectedDataType} post={post} mode={mode} bestMode={setBestMode} />
                     </div>
                 </div>
             </div>
