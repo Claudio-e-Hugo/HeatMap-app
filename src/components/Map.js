@@ -24,6 +24,8 @@ const center = [40.6464534, -8.6536617];
 // Lamp post's coordinates
 const p15_coords = [40.64416, -8.65616];
 const p19_coords = [40.64339, -8.65847];
+const p3_coords = [40.64074, -8.65705];
+const p5_coords = [40.64088, -8.65397];
 
 var segmented_data = null;
 var coordinates_data = null;
@@ -68,6 +70,7 @@ function Map(props) {
             }
         }).then(response => 
             response.json().then(data => {
+                console.log("get_lines");
                 setCoords(data);
             })
         );
@@ -83,6 +86,8 @@ function Map(props) {
             response.json().then(data => {
                 segmented_data = data[0];
                 best_segmented_data = data[1];
+                console.log("handle_segments");
+                console.log(data);
             })
         );
     }, []);
@@ -95,6 +100,7 @@ function Map(props) {
             }
         }).then(response => 
             response.json().then(data => {
+                console.log("get_json");
                 coordinates_data = data;
             })
         );
@@ -150,6 +156,16 @@ function Map(props) {
                                         P 19
                                     </Popup>
                                 </Marker>
+                                <Marker position={p3_coords} icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}>
+                                    <Popup>
+                                        P 3
+                                    </Popup>
+                                </Marker>
+                                <Marker position={p5_coords} icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}>
+                                    <Popup>
+                                        P 5
+                                    </Popup>
+                                </Marker>
                             </MapContainer>
                                 </CardContent>
                             </Card>                          
@@ -183,10 +199,8 @@ function coloringBitrate(x ,withCell) {
 function render_segmented_mode(segmented_data, best_segmented_data, post, selectedDataType, bestMode) {
     if(!bestMode) {
         if (segmented_data != null) {
-            console.log(post);
             return post.map((p) => {
                 var data_post = segmented_data[p];
-                console.log(data_post);
                 return Object.keys(data_post).map((segment) => {
                     var aux = segment.replace('[[', '').replace(']]', '').replace('[', '').replace(']', '').split(",").map(Number);
                     aux = [[ [aux[0], aux[1]], [aux[2], aux[3]] ]];
@@ -270,91 +284,90 @@ function render_segmented_mode(segmented_data, best_segmented_data, post, select
         }
     } else {
         if (best_segmented_data != null) {
-            console.log(post);
-            return post.map((p) => {
-                var data_post = best_segmented_data[p];
-                console.log(data_post);
-                // return Object.keys(data_post).map((segment) => {
-                //     var aux = segment.replace('[[', '').replace(']]', '').replace('[', '').replace(']', '').split(",").map(Number);
-                //     // aux = [[ [aux[0], aux[1]], [aux[2], aux[3]] ]];
-                //     var values = data_post[segment];
-                //     //if radio button is selected, show the circles
-                //     if (post.includes("cell")){
-                //         if(selectedDataType === "bitrate" ){
-                //             let x = coloringBitrate(values.bitrate, true);
-                //             if (x <= 120) {
-                //                 color = "hsl(" + x + ", 100%, 50%)";
-                //             } else {
-                //                 color = "hsl(" + 120 + ", 100%, 50%)";
-                                
-                //             }
-                //         } else if(selectedDataType === "jitter"){
-                //             let x=120 - values.jitter
-                //             if(x<0){
-                //                 x=0;
-                //             }else if(x>120){
-                //                 x=120;
-                //             }
-                //             color = "hsl(" + (x) + ", 100%, 50%)";  
-                //         } else if(selectedDataType === "ploss"){ 
-                //             let x=120 - values.lost
-                //             if(x<0){
-                //                 x=0;
-                //             }else if(x>120){
-                //                 x=120;
-                //             }
-                //             color = "hsl(" + (x) + ", 100%, 50%)";  
-                //         }
-                //     }else{
-                //         if(selectedDataType === "bitrate" ){
-                //             let x= (values.bitrate);
-                //             if(x<0){
-                //                 x=0;
-                //             }else if(x>120){
-                //                 x=120;
-                //             }
-                //             color = "hsl(" + (x*20) + ", 100%, 50%)";
-                //         } else if(selectedDataType === "jitter"){
-                //             let x=120 - values.jitter
-                //             if(x<0){
-                //                 x=0;
-                //             }else if(x>120){
-                //                 x=120;
-                //             }
-                //             color = "hsl(" + (x) + ", 100%, 50%)";  
-                //         } else if(selectedDataType === "ploss"){ 
-                //             let x=120 - values.lost
-                //             if(x<0){
-                //                 x=0;
-                //             }else if(x>120){
-                //                 x=120;
-                //             }
-                //             color = "hsl(" + (x) + ", 100%, 50%)";  
-                //         }
-                //     }
-                //     return (
-                //         // <Polyline key={segment} pathOptions={{ color: color }} positions={aux}
-                //         //     eventHandlers={{
-                //         //         //check the heat value and show the popup with the right data                    
-                //         //         mouseover: (event) => {
-                //         //             if(selectedDataType === "bitrate"){
-                //         //                 event.target.bindPopup("Bitrate: " + values.bitrate + " kbps on " + p).openPopup();
-                //         //             }
-                //         //             if(selectedDataType === "jitter"){
-                //         //                 event.target.bindPopup("Jitter: " + values.jitter + " ms on " + p).openPopup();
-                //         //             }
-                //         //             if(selectedDataType === "ploss"){
-                //         //                 event.target.bindPopup("Packet Loss: " + values.lost + " % on " + p).openPopup();
-                //         //             }
-                //         //             event.target.openPopup()},
-                //         //         mouseout: (event) => event.target.closePopup(),
-            
-                //         //     }}
-                //         // />
-                //         <CircleMarker key={segment} center={aux} radius={5} color={color} ></CircleMarker>
-                //     )
-                // })
-            })
+            return Object.keys(best_segmented_data).map((segment) => {
+                var data = best_segmented_data[segment];
+
+                var aux = segment.replace('[[', '').replace(']]', '').replace('[', '').replace(']', '').split(",").map(Number);
+                aux = [[ [aux[0], aux[1]], [aux[2], aux[3]] ]];
+                var values = best_segmented_data[segment];
+
+                if(data.best_post == 'cell'){
+                    if(selectedDataType === "bitrate" ){
+                        let x = coloringBitrate(data.bitrate, true);
+                        if (x <= 120) {
+                            color = "hsl(" + x + ", 100%, 50%)";
+                        } else {
+                            color = "hsl(" + 120 + ", 100%, 50%)";
+                            
+                        }
+                    
+                    } else if(selectedDataType === "jitter"){
+                        let x=120 - data.jitter
+                        if(x<0){
+                            x=0;
+                        }else if(x>120){
+                            x=120;
+                        }
+                        color = "hsl(" + (x) + ", 100%, 50%)";  
+                    } else if(selectedDataType === "ploss"){ 
+                        let x=120 - data.lost
+                        if(x<0){
+                            x=0;
+                        }else if(x>120){
+                            x=120;
+                        }
+                        color = "hsl(" + (x) + ", 100%, 50%)";  
+                    }
+                } else {
+                    if(selectedDataType === "bitrate" ){
+                        let x= (data.bitrate);
+                        if(x<0){
+                            x=0;
+                        }else if(x>120){
+                            x=120;
+                        }
+                        color = "hsl(" + (x*15) + ", 100%, 50%)";
+                    } else if(selectedDataType === "jitter"){
+                        let x=120 - data.jitter
+                        if(x<0){
+                            x=0;
+                        }else if(x>120){
+                            x=120;
+                        }
+                        color = "hsl(" + (x) + ", 100%, 50%)";  
+                    } else if(selectedDataType === "ploss"){ 
+                        let x=120 - data.lost
+                        if(x<0){
+                            x=0;
+                        }else if(x>120){
+                            x=120;
+                        }
+                        color = "hsl(" + (x) + ", 100%, 50%)";  
+                    }
+                }
+
+                return (
+                    <Polyline key={best_segmented_data[segment]} pathOptions={{ color: color }} positions={aux}
+                        eventHandlers={{
+                            //check the heat value and show the popup with the right data                    
+                            mouseover: (event) => {
+                                if(selectedDataType === "bitrate"){
+                                    event.target.bindPopup("Bitrate: " + values.bitrate + " kbps on " + best_segmented_data[segment].best_post).openPopup();
+                                }
+                                if(selectedDataType === "jitter"){
+                                    event.target.bindPopup("Jitter: " + values.jitter + " ms on " + best_segmented_data[segment].best_post).openPopup();
+                                }
+                                if(selectedDataType === "ploss"){
+                                    event.target.bindPopup("Packet Loss: " + values.lost + " % on " + best_segmented_data[segment].best_post).openPopup();
+                                }
+                                event.target.openPopup()},
+                            mouseout: (event) => event.target.closePopup(),
+        
+                        }}
+                    />
+                )
+                
+            });
         }
     }
 }

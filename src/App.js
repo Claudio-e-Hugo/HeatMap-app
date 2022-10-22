@@ -3,8 +3,6 @@ import Map from './components/Map';
 import './App.css';
 import NavBar from './components/NavBar';
 import Filter from './components/Filter';
-import { Component } from "react";
-
 
 export default function App() {
     const [selectedDataType, setSelectedDataType] = useState('bitrate');
@@ -25,7 +23,7 @@ export default function App() {
                 <div class="row">
                     <div class="col">
                         <Filter setSelectedDataType={setSelectedDataType} setPost={setPost} post={post} setMode={setMode} setBestMode={setBestMode} />
-                        <Map selectedDataType={selectedDataType} post={post} mode={mode} bestMode={setBestMode} />
+                        <Map selectedDataType={selectedDataType} post={post} mode={mode} bestMode={bestMode} />
                     </div>
                 </div>
             </div>

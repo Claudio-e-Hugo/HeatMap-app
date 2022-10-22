@@ -66,8 +66,6 @@ function Filter(props) {
         } else {
             props.setBestMode(false);
         }
-        console.log(props.bestMode);
-
     }
 
     const handleSwitchChange = (event) => {
