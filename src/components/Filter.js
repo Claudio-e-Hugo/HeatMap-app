@@ -71,8 +71,10 @@ function Filter(props) {
     const handleSwitchChange = (event) => {
         if(event.target.checked) {
             props.setMode('segmented');
+            console.log(props.mode);
         } else {
             props.setMode('coordinates');
+            console.log(props.mode);
         }
     }
 
@@ -144,52 +146,102 @@ function Filter(props) {
                                             overflow: 'auto',
                                         }}
                                         >
-                                            
-                                            <FormControl>
-                                                <FormLabel id="info">Filters</FormLabel>
-                                                <RadioGroup
-                                                    aria-labelledby="demo-radio-buttons-group-label"
-                                                    defaultValue="bitrate"
-                                                    name="radio-buttons-group"
-                                                >
-                                                    <FormControlLabel onChange={handleChange} value="bitrate" control={<Radio />} label="BitRate" />
-                                                    <FormControlLabel onChange={handleChange} value="jitter"  control={<Radio />} label="Jitter" />
-                                                    <FormControlLabel onChange={handleChange} value="ploss"   control={<Radio />} label="Packet Loss" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <div>
-                                                <FormControlLabel
-                                                    control={
-                                                    <Checkbox value="p15" onChange={handleChangeCheckBox}/>
-                                                    }
-                                                    label="P15"
-                                                />
-                                                <FormControlLabel
-                                                    control={
-                                                    <Checkbox value="p19" onChange={handleChangeCheckBox}/>
-                                                    }
-                                                    label="P19"
-                                                />
-                                                <FormControlLabel
-                                                    control={
-                                                    <Checkbox value="cell" onChange={handleChangeCheckBox}/>
-                                                    }
-                                                    label="Cell"
-                                                />
-                                            </div>
-                                            <div>
                                             <FormGroup>
                                                 <FormControlLabel control={<Switch onChange={handleSwitchChange} defaultChecked />} label="Mode" />
                                             </FormGroup>
-                                            <FormGroup>
-                                                <FormControlLabel
-                                                    control={
-                                                    <Checkbox value="best_mode" onChange={handleChangeBestMode}/>
-                                                    }
-                                                    label="Best Mode"
-                                                />
-                                            </FormGroup>
-                                            </div>
+                                            {
+                                                props.mode == 'segmented' ?
+                                                    <div>
+                                                        <h1>Segmented</h1>
+                                                        <FormControl>
+                                                            <FormLabel id="info">Filters</FormLabel>
+                                                            <RadioGroup
+                                                                aria-labelledby="demo-radio-buttons-group-label"
+                                                                defaultValue="bitrate"
+                                                                name="radio-buttons-group"
+                                                            >
+                                                                <FormControlLabel onChange={handleChange} value="bitrate" control={<Radio />} label="BitRate" />
+                                                                <FormControlLabel onChange={handleChange} value="jitter"  control={<Radio />} label="Jitter" />
+                                                                <FormControlLabel onChange={handleChange} value="ploss"   control={<Radio />} label="Packet Loss" />
+                                                            </RadioGroup>
+                                                        </FormControl>
+                                                        
+                                                        {
+                                                            props.bestMode == false ? 
+                                                                <div>
+                                                                    <FormControlLabel
+                                                                        control={
+                                                                        <Checkbox value="p15" onChange={handleChangeCheckBox}/>
+                                                                        }
+                                                                        label="P15"
+                                                                    />
+                                                                    <FormControlLabel
+                                                                        control={
+                                                                        <Checkbox value="p19" onChange={handleChangeCheckBox}/>
+                                                                        }
+                                                                        label="P19"
+                                                                    />
+                                                                    <FormControlLabel
+                                                                        control={
+                                                                        <Checkbox value="cell" onChange={handleChangeCheckBox}/>
+                                                                        }
+                                                                        label="Cell"
+                                                                    />
+                                                                </div>
+                                                            :
+                                                            null
+                                                        }
+                                                        
+                                                        
+                                                        <div>
+                                                        
+                                                        <FormGroup>
+                                                            <FormControlLabel
+                                                                control={
+                                                                <Checkbox value="best_mode" onChange={handleChangeBestMode}/>
+                                                                }
+                                                                label="Best Mode"
+                                                            />
+                                                        </FormGroup>
+                                                        </div>
+                                                    </div>
+                                                :
+                                                     <div>
+                                                        <h1> Coordinates</h1>
+                                                        <FormControl>
+                                                            <FormLabel id="info">Filters</FormLabel>
+                                                            <RadioGroup
+                                                                aria-labelledby="demo-radio-buttons-group-label"
+                                                                defaultValue="bitrate"
+                                                                name="radio-buttons-group"
+                                                            >
+                                                                <FormControlLabel onChange={handleChange} value="bitrate" control={<Radio />} label="BitRate" />
+                                                                <FormControlLabel onChange={handleChange} value="jitter"  control={<Radio />} label="Jitter" />
+                                                                <FormControlLabel onChange={handleChange} value="ploss"   control={<Radio />} label="Packet Loss" />
+                                                            </RadioGroup>
+                                                        </FormControl>
+                                                        <div>
+                                                            <FormControlLabel
+                                                                control={
+                                                                <Checkbox value="p15" onChange={handleChangeCheckBox}/>
+                                                                }
+                                                                label="P15"
+                                                            />
+                                                            <FormControlLabel
+                                                                control={
+                                                                <Checkbox value="p19" onChange={handleChangeCheckBox}/>
+                                                                }
+                                                                label="P19"
+                                                            />
+                                                            <FormControlLabel
+                                                                control={
+                                                                <Checkbox value="cell" onChange={handleChangeCheckBox}/>
+                                                                }
+                                                                label="Cell"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                            }
                                         </StyledBox>
                                     </SwipeableDrawer>
                                 </Root>

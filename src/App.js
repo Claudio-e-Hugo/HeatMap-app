@@ -22,7 +22,7 @@ export default function App() {
                 </div>
                 <div class="row">
                     <div class="col">
-                        <Filter setSelectedDataType={setSelectedDataType} setPost={setPost} post={post} setMode={setMode} setBestMode={setBestMode} />
+                        <Filter setSelectedDataType={setSelectedDataType} setPost={setPost} post={post} setMode={setMode} setBestMode={setBestMode} mode={mode} bestMode={bestMode} />
                         <Map selectedDataType={selectedDataType} post={post} mode={mode} bestMode={bestMode} />
                     </div>
                 </div>
