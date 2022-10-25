@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -63,8 +63,32 @@ function Filter(props) {
         props.setSelectedDataType(event.target.value);
     }
 
+    const [dayTime, setDayTime] = useState("All time");
+
+
+    // <MenuItem value={[6,12]}>Morning</
+    // {[12,20]}>Afternoon</
+    // {[20,23]}>Early evening
+    // {[0,6]}>Night</
+
     const changeHour = (event) => {
-        props.setSelectedHours(event.target.value);
+        setDayTime(event.target.value);
+
+        if(event.target.value == "Morning") {
+            props.setSelectedHours([0,12]);
+        } else if(event.target.value == "Afternoon") {
+            props.setSelectedHours([12,20]);
+        } else if(event.target.value == "Early Evening") {
+            props.setSelectedHours([20,23]);
+        } else if(event.target.value == "Night") {
+            props.setSelectedHours([0, 6]);
+        } else if(event.target.value == "All time") {
+            props.setSelectedHours("All time");
+        }
+
+
+        
+        
     }
 
     const handleChangeCheckBox = (event) => {
@@ -90,10 +114,8 @@ function Filter(props) {
     const handleSwitchChange = (event) => {
         if(event.target.checked) {
             props.setMode('segmented');
-            console.log(props.mode);
         } else {
             props.setMode('coordinates');
-            console.log(props.mode);
         }
     }
 
@@ -238,69 +260,80 @@ function Filter(props) {
                                                         </div>
                                                     </div>
                                                 :
-                                                     <div>
+                                                     <div class="row">
+
                                                         <h1> Coordinates</h1>
-                                                        <FormControl>
-                                                            <FormLabel id="info">Filters</FormLabel>
-                                                            <RadioGroup
-                                                                aria-labelledby="demo-radio-buttons-group-label"
-                                                                defaultValue="bitrate"
-                                                                name="radio-buttons-group"
-                                                            >
-                                                                <FormControlLabel onChange={handleChange} value="bitrate" control={<Radio />} label="BitRate" />
-                                                                <FormControlLabel onChange={handleChange} value="jitter"  control={<Radio />} label="Jitter" />
-                                                                <FormControlLabel onChange={handleChange} value="ploss"   control={<Radio />} label="Packet Loss" />
-                                                            </RadioGroup>
-                                                        </FormControl>
-                                                        <div>
-                                                            <FormControlLabel
-                                                                control={
-                                                                <Checkbox value="p15" onChange={handleChangeCheckBox}/>
-                                                                }
-                                                                label="P15"
-                                                            />
-                                                            <FormControlLabel
-                                                                control={
-                                                                <Checkbox value="p19" onChange={handleChangeCheckBox}/>
-                                                                }
-                                                                label="P19"
-                                                            />
-                                                            <FormControlLabel
-                                                                control={
-                                                                <Checkbox value="cell" onChange={handleChangeCheckBox}/>
-                                                                }
-                                                                label="Cell"
-                                                            />
-                                                            <FormControlLabel
-                                                                control={
-                                                                <Checkbox value="p3" onChange={handleChangeCheckBox}/>
-                                                                }
-                                                                label="P3"
-                                                            />
-                                                            <FormControlLabel
-                                                                control={
-                                                                <Checkbox value="p5" onChange={handleChangeCheckBox}/>
-                                                                }
-                                                                label="P5"
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                        <FormControl width="20%">
-                                                            <InputLabel id="demo-simple-select-label">Hours</InputLabel>
-                                                            <Select
-                                                                labelId="demo-simple-select-label"
-                                                                id="demo-simple-select"                                                                
-                                                                label="Hours"                                                    
-                                                                onChange={changeHour}
-                                                            >
-                                                                {/* <MenuItem value={[]}>Chose a time of the day</MenuItem> */}
-                                                                <MenuItem value={[6,12]}>Morning</MenuItem>
+                                                            <div class="col">
+                                                                <FormControl>
+                                                                    <FormLabel id="info">Filters</FormLabel>
+                                                                    <RadioGroup
+                                                                        aria-labelledby="demo-radio-buttons-group-label"
+                                                                        defaultValue="bitrate"
+                                                                        name="radio-buttons-group"
+                                                                    >
+                                                                        <FormControlLabel onChange={handleChange} value="bitrate" control={<Radio />} label="BitRate" />
+                                                                        <FormControlLabel onChange={handleChange} value="jitter"  control={<Radio />} label="Jitter" />
+                                                                        <FormControlLabel onChange={handleChange} value="ploss"   control={<Radio />} label="Packet Loss" />
+                                                                    </RadioGroup>
+                                                                </FormControl>
+                                                                <div>
+                                                                    <FormControlLabel
+                                                                        control={
+                                                                        <Checkbox value="p15" onChange={handleChangeCheckBox}/>
+                                                                        }
+                                                                        label="P15"
+                                                                    />
+                                                                    <FormControlLabel
+                                                                        control={
+                                                                        <Checkbox value="p19" onChange={handleChangeCheckBox}/>
+                                                                        }
+                                                                        label="P19"
+                                                                    />
+                                                                    <FormControlLabel
+                                                                        control={
+                                                                        <Checkbox value="cell" onChange={handleChangeCheckBox}/>
+                                                                        }
+                                                                        label="Cell"
+                                                                    />
+                                                                    <FormControlLabel
+                                                                        control={
+                                                                        <Checkbox value="p3" onChange={handleChangeCheckBox}/>
+                                                                        }
+                                                                        label="P3"
+                                                                    />
+                                                                    <FormControlLabel
+                                                                        control={
+                                                                        <Checkbox value="p5" onChange={handleChangeCheckBox}/>
+                                                                        }
+                                                                        label="P5"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        <div class="col-md">
+
+                                                            <FormControl variant="outlined">
+                                                                <InputLabel id="demo-simple-select-outlined-label">Hours</InputLabel>
+                                                                <Select
+                                                                    labelId="demo-simple-select-outlined-label"
+                                                                    id="demo-simple-select-outlined"
+                                                                    value={dayTime}
+                                                                    onChange={changeHour}
+                                                                    label="Hours"
+                                                                    sx={{width: 200}}
+                                                                >
+
+                                                                {/* <MenuItem value={[6,12]}>Morning</MenuItem>
                                                                 <MenuItem value={[12,20]}>Afternoon</MenuItem>
                                                                 <MenuItem value={[20,23]}>Early evening</MenuItem>
                                                                 <MenuItem value={[0,6]}>Night</MenuItem>
+                                                                <MenuItem value={'All time'}>All day</MenuItem> */}
+                                                                <MenuItem value={"Morning"}>Morning</MenuItem>
+                                                                <MenuItem value={"Afternoon"}>Afternoon</MenuItem>
+                                                                <MenuItem value={"Early Evening"}>Early evening</MenuItem>
+                                                                <MenuItem value={"Night"}>Night</MenuItem>
                                                                 <MenuItem value={'All time'}>All day</MenuItem>
-                                                            </Select>
-                                                        </FormControl>
+                                                                </Select>
+                                                            </FormControl>
                                                         </div>
                                                     </div>
                                             }

@@ -82,7 +82,6 @@ function Map(props) {
             }
         }).then(response => 
             response.json().then(data => {
-                console.log("get_lines");
                 setCoords(data);
             })
         );
@@ -98,8 +97,6 @@ function Map(props) {
             response.json().then(data => {
                 segmented_data = data[0];
                 best_segmented_data = data[1];
-                console.log("handle_segments");
-                console.log(data);
             })
         );
     }, []);
@@ -112,7 +109,6 @@ function Map(props) {
             }
         }).then(response => 
             response.json().then(data => {
-                console.log("get_json");
                 coordinates_data = data;
             })
         );
@@ -617,10 +613,8 @@ function render_coordinates_mode(coordinates_data, post, selectedDataType,hours)
     if (coordinates_data != null) {
         return post.map((p) => {
             var data_post = coordinates_data[p];
-            console.log(hours);
             if (hours =='All time') {
                 data_post = coordinates_data[p];
-                console.log(data_post);
             }else{
                 data_post = data_post.filter((d) => (d.hour > hours[0] && d.hour <= hours[1] ));
             }
