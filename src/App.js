@@ -9,6 +9,7 @@ export default function App() {
     const [post, setPost] = useState([]);
     const [mode, setMode] = useState('segmented');
     const [bestMode, setBestMode] = useState(false);
+    const [hours,setSelectedHours]=useState('All day');
 
     return (
         <div class="main-div"
@@ -22,8 +23,8 @@ export default function App() {
                 </div>
                 <div class="row">
                     <div class="col">
-                        <Filter setSelectedDataType={setSelectedDataType} setPost={setPost} post={post} setMode={setMode} setBestMode={setBestMode} mode={mode} bestMode={bestMode} />
-                        <Map selectedDataType={selectedDataType} post={post} mode={mode} bestMode={bestMode} />
+                        <Filter setSelectedDataType={setSelectedDataType} setPost={setPost} post={post} setMode={setMode} setBestMode={setBestMode} mode={mode} bestMode={bestMode} setSelectedHours={setSelectedHours} hours={hours} />
+                        <Map selectedDataType={selectedDataType} post={post} mode={mode} bestMode={bestMode} hours={hours}/>
                     </div>
                 </div>
             </div>

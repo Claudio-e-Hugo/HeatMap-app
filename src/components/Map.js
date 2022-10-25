@@ -119,11 +119,12 @@ function Map(props) {
     }, []);
 
 
-    function render_segmented_mode(segmented_data, best_segmented_data, post, selectedDataType, bestMode) {
+    function render_segmented_mode(segmented_data, best_segmented_data, post, selectedDataType, bestMode,hours) {
         if(!bestMode) {
             if (segmented_data != null) {
                 return post.map((p) => {
                     var data_post = segmented_data[p];
+                    
                     return Object.keys(data_post).map((segment) => {
                         var aux = segment.replace('[[', '').replace(']]', '').replace('[', '').replace(']', '').split(",").map(Number);
                         aux = [[ [aux[0], aux[1]], [aux[2], aux[3]] ]];
@@ -208,11 +209,9 @@ function Map(props) {
             if (best_segmented_data != null) {
                 return Object.keys(best_segmented_data).map((segment) => {
                     var data = best_segmented_data[segment];
-                    
                     var aux = segment.replace('[[', '').replace(']]', '').replace('[', '').replace(']', '').split(",").map(Number);
                     aux = [[ [aux[0], aux[1]], [aux[2], aux[3]] ]];
                     var values = best_segmented_data[segment];
-
                     if(selectedDataType === "bitrate" ){
                         let x = coloringBitrate(data.bitrate, true);
                         if (x <= 120) {
@@ -249,6 +248,7 @@ function Map(props) {
                         } else if (selectedDataType === 'ploss') {
                             center = [best_segmented_data[segment].lat_lost, best_segmented_data[segment].long_lost]
                         }
+                        
                     }
 
                     return (
@@ -305,7 +305,7 @@ function Map(props) {
                                         <Polyline
                                             positions={showLine}
                                             dashArray={3}
-                                            color={"black"}
+                                            color={"blue"}
                                             opacity={0.2}
                                         />
                                     </div>
@@ -357,9 +357,9 @@ function Map(props) {
 
                                 {   
                                     props.mode == 'segmented' ? 
-                                    render_segmented_mode(segmented_data, best_segmented_data, props.post, props.selectedDataType, props.bestMode)
+                                    render_segmented_mode(segmented_data, best_segmented_data, props.post, props.selectedDataType, props.bestMode,props.hours)
                                     :
-                                    render_coordinates_mode(coordinates_data, props.post, props.selectedDataType) 
+                                    render_coordinates_mode(coordinates_data, props.post, props.selectedDataType,props.hours) 
                                 }
                                 
 
@@ -613,10 +613,16 @@ function coloringBitrate(x ,withCell) {
 //     }
 // }
 
-function render_coordinates_mode(coordinates_data, post, selectedDataType) {
+function render_coordinates_mode(coordinates_data, post, selectedDataType,hours) {
     if (coordinates_data != null) {
         return post.map((p) => {
             var data_post = coordinates_data[p];
+            if (hours =='All time') {
+                data_post = coordinates_data[p];
+                console.log(data_post);
+            }else{
+                data_post = data_post.filter((d) => (d.hour > hours[0] && d.hour < hours[1]));
+            }
             return data_post.map((segment) => {
                 if (post.includes("cell")){
                     if(selectedDataType === "bitrate" ){

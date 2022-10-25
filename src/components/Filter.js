@@ -17,6 +17,20 @@ import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Switch from '@mui/material/Switch';
 import FormGroup from '@mui/material/FormGroup';
 import { CheckBox } from '@mui/icons-material';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+
+//day hours filter
+const Intervals = [
+    //60:00 to 08:00
+    { value: 'Morning',hours: '06:00-12:00' },
+    { value: 'Early evening',hours: '12:00-18:00' },
+    { value: 'Afternoon',hours: '18:00,00:00' },
+    { value: 'Night',hours: '00:00,06:00' },
+    ];
+
+
 
 // swipe drawer variables
 const drawerBleeding = 46;
@@ -47,6 +61,10 @@ function Filter(props) {
     const handleChange = (event) => {
         // props.setDataType(event.target.value);
         props.setSelectedDataType(event.target.value);
+    }
+
+    const changeHour = (event) => {
+        props.setSelectedHours(event.target.value);
     }
 
     const handleChangeCheckBox = (event) => {
@@ -265,6 +283,25 @@ function Filter(props) {
                                                                 }
                                                                 label="P5"
                                                             />
+                                                        </div>
+                                                        <div>
+                                                        <FormControl width="20%">
+                                                            <InputLabel id="demo-simple-select-label">Hours</InputLabel>
+                                                            <Select
+                                                                labelId="demo-simple-select-label"
+                                                                id="demo-simple-select"
+                                                                value={props.hours}
+                                                                label="Hours"
+                                                                onChange={changeHour}
+                                                            >
+                                                                <MenuItem value={[]}>Chose a time of the day</MenuItem>
+                                                                <MenuItem value={[6,12]}>Morning</MenuItem>
+                                                                <MenuItem value={[12,18]}>Early evening</MenuItem>
+                                                                <MenuItem value={[18,0]}>Afternoon</MenuItem>
+                                                                <MenuItem value={[0,6]}>Night</MenuItem>
+                                                                <MenuItem value={'All time'}>All day</MenuItem>
+                                                            </Select>
+                                                        </FormControl>
                                                         </div>
                                                     </div>
                                             }
