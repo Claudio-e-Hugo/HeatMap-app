@@ -617,6 +617,7 @@ function render_coordinates_mode(coordinates_data, post, selectedDataType,hours)
     if (coordinates_data != null) {
         return post.map((p) => {
             var data_post = coordinates_data[p];
+            console.log(hours);
             if (hours =='All time') {
                 data_post = coordinates_data[p];
                 console.log(data_post);

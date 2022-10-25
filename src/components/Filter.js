@@ -295,8 +295,8 @@ function Filter(props) {
                                                             >
                                                                 {/* <MenuItem value={[]}>Chose a time of the day</MenuItem> */}
                                                                 <MenuItem value={[6,12]}>Morning</MenuItem>
-                                                                <MenuItem value={[12,18]}>Early evening</MenuItem>
-                                                                <MenuItem value={[18,0]}>Afternoon</MenuItem>
+                                                                <MenuItem value={[12,20]}>Afternoon</MenuItem>
+                                                                <MenuItem value={[20,23]}>Early evening</MenuItem>
                                                                 <MenuItem value={[0,6]}>Night</MenuItem>
                                                                 <MenuItem value={'All time'}>All day</MenuItem>
                                                             </Select>
