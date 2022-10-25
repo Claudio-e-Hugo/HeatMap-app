@@ -16,6 +16,7 @@ import Typography from '@mui/material/Typography';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Switch from '@mui/material/Switch';
 import FormGroup from '@mui/material/FormGroup';
+import { CheckBox } from '@mui/icons-material';
 
 // swipe drawer variables
 const drawerBleeding = 46;
@@ -187,6 +188,19 @@ function Filter(props) {
                                                                         }
                                                                         label="Cell"
                                                                     />
+                                                                    <FormControlLabel
+                                                                        control={
+                                                                        <Checkbox value="p3" onChange={handleChangeCheckBox}/>
+                                                                        }
+                                                                        label="P3"
+                                                                    />
+                                                                    <FormControlLabel
+                                                                        control={
+                                                                        <Checkbox value="p5" onChange={handleChangeCheckBox}/>
+                                                                        }
+                                                                        label="P5"
+                                                                    />
+
                                                                 </div>
                                                             :
                                                             null
@@ -238,6 +252,18 @@ function Filter(props) {
                                                                 <Checkbox value="cell" onChange={handleChangeCheckBox}/>
                                                                 }
                                                                 label="Cell"
+                                                            />
+                                                            <FormControlLabel
+                                                                control={
+                                                                <Checkbox value="p3" onChange={handleChangeCheckBox}/>
+                                                                }
+                                                                label="P3"
+                                                            />
+                                                            <FormControlLabel
+                                                                control={
+                                                                <Checkbox value="p5" onChange={handleChangeCheckBox}/>
+                                                                }
+                                                                label="P5"
                                                             />
                                                         </div>
                                                     </div>
