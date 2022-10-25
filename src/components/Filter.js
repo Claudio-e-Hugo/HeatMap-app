@@ -289,12 +289,11 @@ function Filter(props) {
                                                             <InputLabel id="demo-simple-select-label">Hours</InputLabel>
                                                             <Select
                                                                 labelId="demo-simple-select-label"
-                                                                id="demo-simple-select"
-                                                                value={props.hours}
-                                                                label="Hours"
+                                                                id="demo-simple-select"                                                                
+                                                                label="Hours"                                                    
                                                                 onChange={changeHour}
                                                             >
-                                                                <MenuItem value={[]}>Chose a time of the day</MenuItem>
+                                                                {/* <MenuItem value={[]}>Chose a time of the day</MenuItem> */}
                                                                 <MenuItem value={[6,12]}>Morning</MenuItem>
                                                                 <MenuItem value={[12,18]}>Early evening</MenuItem>
                                                                 <MenuItem value={[18,0]}>Afternoon</MenuItem>

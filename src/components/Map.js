@@ -621,7 +621,7 @@ function render_coordinates_mode(coordinates_data, post, selectedDataType,hours)
                 data_post = coordinates_data[p];
                 console.log(data_post);
             }else{
-                data_post = data_post.filter((d) => (d.hour > hours[0] && d.hour < hours[1]));
+                data_post = data_post.filter((d) => (d.hour > hours[0] && d.hour <= hours[1] ));
             }
             return data_post.map((segment) => {
                 if (post.includes("cell")){

@@ -9,7 +9,7 @@ export default function App() {
     const [post, setPost] = useState([]);
     const [mode, setMode] = useState('segmented');
     const [bestMode, setBestMode] = useState(false);
-    const [hours,setSelectedHours]=useState('All day');
+    const [hours,setSelectedHours]=useState('All time');
 
     return (
         <div class="main-div"
