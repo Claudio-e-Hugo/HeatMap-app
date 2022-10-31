@@ -3,6 +3,11 @@ import Map from './components/Map';
 import './App.css';
 import NavBar from './components/NavBar';
 import Filter from './components/Filter';
+import logo from './imgs/imminence.png';
+import it from './imgs/it.png';
+import wavecom from './imgs/wavecom.png';
+import pole from './imgs/pole.png';
+import { Scale } from '@mui/icons-material';
 
 export default function App() {
     const [selectedDataType, setSelectedDataType] = useState('bitrate');
@@ -19,12 +24,13 @@ export default function App() {
         >
             <div>
                 <div class="row">
-                    <NavBar/>
+                    <NavBar logo={logo} it={it} wavecom={wavecom}/>
                 </div>
                 <div class="row">
                     <div class="col">
                         <Filter setSelectedDataType={setSelectedDataType} setPost={setPost} post={post} setMode={setMode} setBestMode={setBestMode} mode={mode} bestMode={bestMode} setSelectedHours={setSelectedHours} hours={hours} />
-                        <Map selectedDataType={selectedDataType} post={post} mode={mode} bestMode={bestMode} hours={hours}/>
+                        <Map pole={pole} selectedDataType={selectedDataType} post={post} mode={mode} bestMode={bestMode} hours={hours}> </Map>
+                        
                     </div>
                 </div>
             </div>

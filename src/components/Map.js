@@ -5,11 +5,12 @@ import {
     Popup,
     TileLayer,
     Marker,
-    CircleMarker
+    CircleMarker,
+    Tooltip,
+    useMap
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css'
-import markerIconPng from "leaflet/dist/images/marker-icon.png"
-import {Icon} from 'leaflet'
+import {Control, Icon} from 'leaflet'
 import '../App.css'
 import {useEffect, useState} from 'react';
 import Box from '@mui/material/Box';
@@ -18,8 +19,9 @@ import CardContent from '@mui/material/CardContent';
 import { styled } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
 
+//import Legend leaflet from 'leaflet';
 
-const map_center = [40.6464534, -8.6536617];
+const map_center = [40.643101, -8.649256];
 
 // Lamp post's coordinates
 const p15_coords = [40.64416, -8.65616];
@@ -70,7 +72,6 @@ const Puller = styled(Box)(({ theme }) => ({
 // var showLine = [];
 
 function Map(props) {
-
     const [coords, setCoords] = useState({});
     const [showLine, setShowLine] = useState([]);
 
@@ -120,62 +121,36 @@ function Map(props) {
             if (segmented_data != null) {
                 return post.map((p) => {
                     var data_post = segmented_data[p];
-                    
                     return Object.keys(data_post).map((segment) => {
                         var aux = segment.replace('[[', '').replace(']]', '').replace('[', '').replace(']', '').split(",").map(Number);
                         aux = [[ [aux[0], aux[1]], [aux[2], aux[3]] ]];
                         var values = data_post[segment];
+                        console.log(p);
                         //if radio button is selected, show the circles
-                        if (post.includes("cell")){
+                        if (p==="cell"){
+                            
                             if(selectedDataType === "bitrate" ){
-                                let x = coloringBitrate(values.bitrate, true);
-                                if (x <= 120) {
-                                    color = "hsl(" + x + ", 100%, 50%)";
-                                } else {
-                                    color = "hsl(" + 120 + ", 100%, 50%)";
-                                }
+                                let x = coloring(segment.bitrate, selectedDataType,true);
+                                color = "hsl(" + x + ", 100%, 50%)";
                             } else if(selectedDataType === "jitter"){
-                                let x=120 - values.jitter
-                                if(x<0){
-                                    x=0;
-                                }else if(x>120){
-                                    x=120;
-                                }
-                                color = "hsl(" + (x) + ", 100%, 50%)";  
+                                let x=coloring(segment.jitter,selectedDataType,true);
+                                console.log(x);
+                                color = "hsl(" + x + ", 100%, 50%)";  
                             } else if(selectedDataType === "ploss"){ 
-                                let x=120 - values.lost
-                                if(x<0){
-                                    x=0;
-                                }else if(x>120){
-                                    x=120;
-                                }
+                                let x=coloring(segment.lost,selectedDataType,true);
                                 color = "hsl(" + (x) + ", 100%, 50%)";  
                             }
                         }else{
                             if(selectedDataType === "bitrate" ){
-                                let x= (values.bitrate);
-                                if(x<0){
-                                    x=0;
-                                }else if(x>120){
-                                    x=120;
-                                }
-                                color = "hsl(" + (x*20) + ", 100%, 50%)";
+                                let x = coloring(segment.bitrate, selectedDataType,false);
+                                color = "hsl(" + x + ", 100%, 50%)";
                             } else if(selectedDataType === "jitter"){
-                                let x=120 - values.jitter
-                                if(x<0){
-                                    x=0;
-                                }else if(x>120){
-                                    x=120;
-                                }
-                                color = "hsl(" + (x) + ", 100%, 50%)";  
+                                let x=coloring(segment.jitter,selectedDataType,false);
+                                console.log(x);
+                                color = "hsl(" + x + ", 100%, 50%)";  
                             } else if(selectedDataType === "ploss"){ 
-                                let x=120 - values.lost
-                                if(x<0){
-                                    x=0;
-                                }else if(x>120){
-                                    x=120;
-                                }
-                                color = "hsl(" + (x) + ", 100%, 50%)";  
+                                let x=coloring(segment.lost,selectedDataType,false);
+                                color = "hsl(" + x + ", 100%, 50%)";  
                             }
                         }
                         return (
@@ -184,7 +159,7 @@ function Map(props) {
                                 //check the heat value and show the popup with the right data                    
                                 mouseover: (event) => {
                                     if(selectedDataType === "bitrate"){
-                                        event.target.bindPopup("Bitrate: " + values.bitrate + " kbps on " + p).openPopup();
+                                        event.target.bindPopup("Bitrate: " + values.bitrate + " Mbps on " + p).openPopup();
                                     }
                                     if(selectedDataType === "jitter"){
                                         event.target.bindPopup("Jitter: " + values.jitter + " ms on " + p).openPopup();
@@ -209,7 +184,7 @@ function Map(props) {
                     aux = [[ [aux[0], aux[1]], [aux[2], aux[3]] ]];
                     var values = best_segmented_data[segment];
                     if(selectedDataType === "bitrate" ){
-                        let x = coloringBitrate(data.bitrate, true);
+                        let x = coloring(data.bitrate, true);
                         if (x <= 120) {
                             color = "hsl(" + x + ", 100%, 50%)";
                         } else {
@@ -275,7 +250,7 @@ function Map(props) {
                                             eventHandlers={{
                                                 mouseover: (event) => {
                                                     if (selectedDataType === 'bitrate') {
-                                                        event.target.bindPopup("Bitrate: " + values.bitrate + " kbps on " + best_segmented_data[segment].best_post_bitrate).openPopup();
+                                                        event.target.bindPopup("Bitrate: " + values.bitrate + " Mbps on " + best_segmented_data[segment].best_post_bitrate).openPopup();
                                                         if (best_segmented_data[segment].best_post_bitrate != 'cell') {
                                                             setShowLine([[best_segmented_data[segment].lat_bitrate, best_segmented_data[segment].long_bitrate], post_coords[best_segmented_data[segment].best_post_bitrate]]);
                                                         }
@@ -316,32 +291,184 @@ function Map(props) {
         }
     }
 
+    function legend(){
+        if (props.selectedDataType === 'bitrate') {
+            return (
+                <Card style={{ width: '10rem',margin:'auto'}}>
+                                    <div class='my-legend'>
+                                        
+                                        <div class='legend-scale' style={{marginTop:'1rem',visibility:props.selectedDataType=='bitrate'? "visible":"hidden"}}>
+                                            <h5 style={{marginLeft:'1rem' }}>Bitrate</h5>
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',  backgroundColor:'hsl(0, 100%, 50%)'}}></span>&#60;1 Mbps<br/>
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',  backgroundColor:'hsl(20, 100%, 50%)'}}></span>&#60;2 Mbps<br/>
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',  backgroundColor:'hsl(40, 100%, 50%)'}}></span>&#60;3 Mbps<br/>
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',  backgroundColor:'hsl(60, 100%, 50%)'}}></span>&#60;4 Mbps<br/>
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',  backgroundColor:'hsl(80, 100%, 50%)'}}></span>&#60;5 Mbps<br/>
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',  backgroundColor:'hsl(100, 100%, 50%)'}}></span>&#60;6 Mbps<br/>
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',  backgroundColor:'hsl(110, 100%, 50%)'}}></span>&#60;7 Mbps<br/>
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',  backgroundColor:'hsl(120, 100%, 50%)'}}></span>&ge;7 Mbps<br/>
+                                        </div>
+                                        
+                                    </div>
+                                       
+                                </Card>
+            )
+        }else if(props.selectedDataType === 'jitter'){
+                return (
+                    <Card style={{ width: '10rem',height:'15rem',margin:'auto'}}>
+                                    <div class='my-legend'>
+                                    
+                                        <div class='legend-scale' style={{marginTop:'1rem',visibility:props.selectedDataType=='jitter'? "visible":"hidden"}}>
+                                            <h5 style={{marginLeft:'1rem' }}>Jitter </h5>
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.2rem',  backgroundColor:'hsl(120, 100%, 50%)'}}></span>&#60;0.3 ms<br/>
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.2rem',  backgroundColor:'hsl(100, 100%, 50%)'}}></span>&#60;1 ms<br/>
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.2rem',  backgroundColor:'hsl(80, 100%, 50%)'}}></span>&#60;5 ms<br/>
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.2rem',  backgroundColor:'hsl(60, 100%, 50%)'}}></span>&#60;10 ms<br/>
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.2rem',  backgroundColor:'hsl(40, 100%, 50%)'}}></span>&#60;20 ms<br/>
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.2rem',  backgroundColor:'hsl(30, 100%, 50%)'}}></span>&#60;30 ms<br/>
+                                                {/* <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',  backgroundColor:'hsl(110, 100%, 50%)'}}></span>&#60;7<br/> */}
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.2rem',  backgroundColor:'hsl(0, 100%, 50%)'}}></span>&ge;30 ms<br/>
+                                        </div>
+                                        
+                                        
+                                        
+                                    </div>
+                                       
+                                </Card>
+                )}else if(props.selectedDataType === 'ploss'){
+                return (
+                    <Card style={{ width: '10rem',height:'15rem',margin:'auto'}}>
+                                    <div class='my-legend'>
+                                        
 
+                                        <div class='legend-scale' style={{marginTop:'1rem',visibility:props.selectedDataType=='ploss'? "visible":"hidden"}}>
+                                            <h6 style={{marginLeft:'1rem' }}>Packet Loss </h6>
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(120, 100%, 50%)'}}></span>&#60;10%<br/>
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(80, 100%, 50%)'}}></span>&#60;30%<br/>
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(60, 100%, 50%)'}}></span>&#60;50%<br/>
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(40, 100%, 50%)'}}></span>&#60;70%<br/>
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(20, 100%, 50%)'}}></span>&#60;90%<br/>
+                                                <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(0, 100%, 50%)'}}></span>&ge;90%<br/>
+                                                {/* <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',  backgroundColor:'hsl(110, 100%, 50%)'}}></span>&#60;7<br/> */}
+                                                {/* <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',  backgroundColor:'hsl(120, 100%, 50%)'}}></span>&#60;8<br/> */}
+                                        </div>
+                                        
+                                        
+                                    </div>
+                                       
+                                </Card>
+                )
+            }
 
-  
+        }
+
+    function cellLegend(){
+        if(props.post.includes('cell')){
+            if (props.selectedDataType === 'bitrate') {
+                return (
+                    <Card style={{ width: '10rem',height:'15rem',margin:'auto'}}>
+                                        <div class='my-legend'>
+                                            
+                                            <div class='legend-scale' style={{marginTop:'1rem',visibility:props.selectedDataType=='bitrate'? "visible":"hidden"}}>
+                                                <h5 style={{marginLeft:'1rem' }}>Cell Bitrate</h5>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.6rem',  backgroundColor:'hsl(180, 100%, 50%)'}}></span>&#60;20 Mbps<br/>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.6rem',  backgroundColor:'hsl(220, 100%, 50%)'}}></span>&#60;40 Mbps<br/>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.6rem',  backgroundColor:'hsl(260, 100%, 50%)'}}></span>&#60;60 Mbps<br/>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.6rem',  backgroundColor:'hsl(280, 100%, 50%)'}}></span>&#60;80 Mbps<br/>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.6rem',  backgroundColor:'hsl(300, 100%, 50%)'}}></span>&ge;80 Mbps<br/>
+                                                    
+                                            </div>
+                                            
+                                        </div>
+                                        
+                                    </Card>
+                )
+            }else if(props.selectedDataType === 'jitter'){
+                    return (
+                        <Card style={{ width: '10rem',height:'15rem',margin:'auto'}}>
+                                        <div class='my-legend'>
+                                        
+                                            <div class='legend-scale' style={{marginTop:'1rem',visibility:props.selectedDataType=='jitter'? "visible":"hidden"}}>
+                                                <h5 style={{marginLeft:'1rem' }}> Cell Jitter</h5>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(180, 100%, 50%)'}}></span>&#60;0.3 ms<br/>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(220, 100%, 50%)'}}></span>&#60;0.7 ms<br/>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(240, 100%, 50%)'}}></span>&#60;1 ms<br/>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(260, 100%, 50%)'}}></span>&#60;5 ms<br/>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(280, 100%, 50%)'}}></span>&#60;10 ms<br/>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(300, 100%, 50%)'}}></span>&ge;10 ms<br/>
+                                                    
+                                            </div>
+                                            
+                                            
+                                            
+                                        </div>
+                                        
+                                    </Card>
+                    )}else if(props.selectedDataType === 'ploss'){
+                    return (
+                        <Card style={{ width: '10rem',height:'15rem',margin:'auto'}}>
+                                        <div class='my-legend'>
+                                            
+
+                                            <div class='legend-scale' style={{marginTop:'1rem',visibility:props.selectedDataType=='ploss'? "visible":"hidden"}}>
+                                                <h6 style={{marginLeft:'1rem' }}>Cell Packet Loss</h6>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(180, 100%, 50%)'}}></span>&#60;1%<br/>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(220, 100%, 50%)'}}></span>&#60;10%<br/>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(240, 100%, 50%)'}}></span>&#60;30%<br/>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(260, 100%, 50%)'}}></span>&#60;50%<br/>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(280, 100%, 50%)'}}></span>&#60;80%<br/>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(300, 100%, 50%)'}}></span>&ge;80%<br/>
+                                                    {/* <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',  backgroundColor:'hsl(110, 100%, 50%)'}}></span>&#60;7<br/> */}
+                                                    {/* <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',  backgroundColor:'hsl(120, 100%, 50%)'}}></span>&#60;8<br/> */}
+                                            </div>
+                                            
+                                            
+                                        </div>
+                                        
+                                    </Card>
+                    )
+        }else{
+            return (
+                <div></div>
+            )
+        }
+        }
+
+    }
+    
+
+    
+
     return (
             <div>
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-1">
                             <div class="float-left">
+                                {cellLegend()}
                                 
                             </div>
                         </div>
+                        <div class="col-sm-1">
+                            <div class="float-right">
+                                {legend()}
+                            </div>
+                        </div>
                         <div class="col-sm-8">
-                            <Card  sx={{     marginBottom:'10rem', minWidth: '80vw', maxHeight: '90vh'}}>
+                            <Card  sx={{marginBottom:'10rem', minWidth: '80vw', maxHeight: '90vh'}}>
                                 <CardContent>
-                                <MapContainer id="map-container"
+                                <MapContainer when id="map-container"
                                     center={map_center}
                                     zoom={14}
                                     minZoom={16}
                                     maxZoom={19}
-                                    style={{width: '100%', height: '82vh', padding: '50'}}
+                                    style={{width: '100%', height: '82vh', padding: '50'}}                                  
                                 >
                                 <TileLayer
                                     url='https://api.maptiler.com/maps/basic-v2/256/{z}/{x}/{y}.png?key=GCrdp2KFceg0vK7Ifepx'
                                 />
-
+                                
+                                
                                 {
                                     Object.keys(coords).map((street) => {
                                        
@@ -359,54 +486,173 @@ function Map(props) {
                                 }
                                 
 
-                                <Marker position={p15_coords} icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}>
-                                    <Popup>
-                                        P 15
-                                    </Popup>
+                                <Marker position={p15_coords}  icon={new Icon({iconUrl: props.pole, iconSize: [50, 50], iconAnchor: [22, 42]})} >
+                                    {/* label */}
+                                    <Tooltip position={p15_coords} offset={[0, 0]} opacity={0.8} permanent={true}>
+                                        <span>p15</span>
+                                    </Tooltip>
                                 </Marker>
-                                <Marker position={p19_coords} icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}>
-                                    <Popup>
-                                        P 19
-                                    </Popup>
+                                <Marker position={p19_coords} icon={new Icon({iconUrl: props.pole, iconSize: [50, 50], iconAnchor: [12, 41]})}>
+                                <Tooltip position={p19_coords} offset={[0, 0]} opacity={0.8} permanent={true}>
+                                        <span>p19</span>
+                                    </Tooltip>
                                 </Marker>
-                                <Marker position={p3_coords} icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}>
-                                    <Popup>
-                                        P 3
-                                    </Popup>
+                                <Marker position={p3_coords} icon={new Icon({iconUrl: props.pole, iconSize: [50, 50], iconAnchor: [12, 41]})}>
+                                <Tooltip position={p3_coords} offset={[0, 0]} opacity={0.8} permanent={true}>
+                                        <span>p3</span>
+                                    </Tooltip>
                                 </Marker>
-                                <Marker position={p5_coords} icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}>
-                                    <Popup>
-                                        P 5
-                                    </Popup>
+                                <Marker position={p5_coords} icon={new Icon({iconUrl: props.pole, iconSize: [50, 50], iconAnchor: [12, 41]})}>
+                                <Tooltip position={p5_coords} offset={[0, 0]} opacity={0.8} permanent={true}>
+                                        <span>p5</span>
+                                    </Tooltip>
                                 </Marker>
                             </MapContainer>
                                 </CardContent>
-                            </Card>                          
-                        </div>
-
+                            </Card> 
                         </div>
                     </div>
                 </div>
-        
+            </div>
+          
     );
 }
 
-function coloringBitrate(x ,withCell) {
-    if (withCell) {
-        if (x < 1) {
-            return 20;
-        } else if (x >= 5 && x < 10) {
-            return 40;
-        } else if (x >= 10 && x < 15) {
-            return 60;
-        } else if (x >= 15 && x < 20) {
-            return 85
-        } else if (x >= 20 && x < 25) {
-            return 95;
-        } else {
-            return 120;
+
+function coloring(x ,selectedDataType,cell) {
+    let bitrate = 0;
+    let jitter = 0;
+    let ploss = 0;
+     
+        //lit blue is the best value and dark blue is the worst value
+    if (cell){
+        if (selectedDataType === 'bitrate') {
+            if (x<20){
+                bitrate=180;
+                
+            }
+            else if (x<40){
+                bitrate= 220;
+               
+            }
+            else if (x<60){
+                bitrate= 260;
+            }else if (x<80){
+                bitrate=280;
+            }else{
+                bitrate= 300;
+                
+            }
+        } else if (selectedDataType === 'jitter') {
+            if (x<=0.3){
+                jitter=180;        
+            }
+            else if (x<0.7){
+                jitter= 220;
+            }
+            else if (x<1){
+                jitter= 240;  
+            }
+            else if (x<5){
+                jitter= 260;   
+            }else if(x<10) {
+                jitter= 280;
+            }
+            else{
+                jitter= 300;
+                
+            }
+        } else if (selectedDataType === 'ploss') {
+            if (x<=1){
+                
+                ploss=180;
+            }
+            else if (x<10){
+                
+                ploss=220;
+            }
+            else if (x<30){
+                ploss=240;
+            }else if (x<50){
+                
+                ploss=260;
+            }
+            else if (x<80){
+                
+                ploss=280;
+            
+            }else{
+                ploss=300;
+            }
+                
+        }
+    }else{
+        if (selectedDataType === 'bitrate') {
+            if (x<1){
+                bitrate=0;
+            }
+            else if (x<2){
+                bitrate= 20;
+            }
+            else if (x<3){
+                bitrate= 40;
+            }
+            else if (x<4){
+                bitrate= 60;
+            }
+            else if (x<5){
+                bitrate= 80;
+            }
+            else if (x<6){
+                bitrate= 100;
+            }else if (x<7){
+                bitrate= 110;
+            }else{
+                bitrate= 120;
+            }
+        } else if (selectedDataType === 'jitter') {
+            if (x<=0.3){
+                jitter=120;
+            }else if (x<1){
+                jitter=100;
+            }else if(x<5){
+                jitter=80;
+            }else if (x<10){
+                jitter=60;
+            }else if(x<20){
+                jitter=40;
+            }else if(x<30){
+                jitter=20;
+            }else{
+                jitter=0;
+            }
+        }else if (selectedDataType === 'ploss') {
+            if (x<10){
+                ploss=120;
+            }else if (x<30){
+                ploss=80;
+            }else if (x<50){
+                ploss=60;
+            }else if (x<70){
+                ploss=40;
+            }else if (x<90){
+                ploss=20;
+            }else{
+                ploss=0;
+            }
         }
     }
+    
+    if (selectedDataType === 'bitrate') {
+        return bitrate;
+    } else if (selectedDataType === 'jitter') {
+        
+
+        return jitter;
+    } else if (selectedDataType === 'ploss') {
+        return ploss;
+    }
+    
 }
 
 // function render_segmented_mode(segmented_data, best_segmented_data, post, selectedDataType, bestMode) {
@@ -478,7 +724,7 @@ function coloringBitrate(x ,withCell) {
 //                                 //check the heat value and show the popup with the right data                    
 //                                 mouseover: (event) => {
 //                                     if(selectedDataType === "bitrate"){
-//                                         event.target.bindPopup("Bitrate: " + values.bitrate + " kbps on " + p).openPopup();
+//                                         event.target.bindPopup("Bitrate: " + values.bitrate + " Mbps on " + p).openPopup();
 //                                     }
 //                                     if(selectedDataType === "jitter"){
 //                                         event.target.bindPopup("Jitter: " + values.jitter + " ms on " + p).openPopup();
@@ -566,7 +812,7 @@ function coloringBitrate(x ,withCell) {
 //                                 //check the heat value and show the popup with the right data                    
 //                                 mouseover: (event) => {
 //                                     if(selectedDataType === "bitrate"){
-//                                         event.target.bindPopup("Bitrate: " + values.bitrate + " kbps on " + best_segmented_data[segment].best_post).openPopup();
+//                                         event.target.bindPopup("Bitrate: " + values.bitrate + " Mbps on " + best_segmented_data[segment].best_post).openPopup();
 //                                     }
 //                                     if(selectedDataType === "jitter"){
 //                                         event.target.bindPopup("Jitter: " + values.jitter + " ms on " + best_segmented_data[segment].best_post).openPopup();
@@ -619,59 +865,50 @@ function render_coordinates_mode(coordinates_data, post, selectedDataType,hours)
                 data_post = data_post.filter((d) => (d.hour > hours[0] && d.hour <= hours[1] ));
             }
             return data_post.map((segment) => {
-                if (post.includes("cell")){
+                if (segment.post=="cell"){
                     if(selectedDataType === "bitrate" ){
-                        let x = coloringBitrate(segment.bitrate, true);
-                        if (x <= 120) {
-                            color = "hsl(" + x + ", 100%, 50%)";
-                        } else {
-                            color = "hsl(" + 120 + ", 100%, 50%)";
-                            
-                        }
-                    
+                        let x = coloring(segment.bitrate, selectedDataType,true);
+                        color = "hsl(" + x + ", 100%, 50%)";
                     } else if(selectedDataType === "jitter"){
-                        let x=120 - segment.jitter
-                        if(x<0){
-                            x=0;
-                        }else if(x>120){
-                            x=120;
-                        }
-                        color = "hsl(" + (x) + ", 100%, 50%)";  
+                        let x=coloring(segment.jitter,selectedDataType,true);
+                        console.log(x);
+                        color = "hsl(" + x + ", 100%, 50%)";  
                     } else if(selectedDataType === "ploss"){ 
-                        let x=120 - segment.lost
-                        if(x<0){
-                            x=0;
-                        }else if(x>120){
-                            x=120;
-                        }
+                        let x=coloring(segment.lost,selectedDataType,true);
                         color = "hsl(" + (x) + ", 100%, 50%)";  
                     }
 
                 }else{
                     if(selectedDataType === "bitrate" ){
-                        let x= (segment.bitrate);
-                        if(x<0){
-                            x=0;
-                        }else if(x>120){
-                            x=120;
-                        }
-                        color = "hsl(" + (x*15) + ", 100%, 50%)";
+                        // let x= (segment.bitrate);
+                        // if(x<0){
+                        //     x=0;
+                        // }else if(x>120){
+                        //     x=120;
+                        // }
+                        // color = "hsl(" + (x) + ", 100%, 50%)";
+                        let x = coloring(segment.bitrate, selectedDataType,false);
+                        color = "hsl(" + x + ", 100%, 50%)";
                     } else if(selectedDataType === "jitter"){
-                        let x=120 - segment.jitter
-                        if(x<0){
-                            x=0;
-                        }else if(x>120){
-                            x=120;
-                        }
-                        color = "hsl(" + (x) + ", 100%, 50%)";  
+                        // let x=120 - segment.jitter
+                        // if(x<0){
+                        //     x=0;
+                        // }else if(x>120){
+                        //     x=120;
+                        // }
+                        // color = "hsl(" + (x) + ", 100%, 50%)";
+                        let x = coloring(segment.jitter, selectedDataType,false);
+                        color = "hsl(" + x + ", 100%, 50%)";  
                     } else if(selectedDataType === "ploss"){ 
-                        let x=120 - segment.lost
-                        if(x<0){
-                            x=0;
-                        }else if(x>120){
-                            x=120;
-                        }
-                        color = "hsl(" + (x) + ", 100%, 50%)";  
+                        // let x=120 - segment.lost
+                        // if(x<0){
+                        //     x=0;
+                        // }else if(x>120){
+                        //     x=120;
+                        // }
+                        // color = "hsl(" + (x) + ", 100%, 50%)";  
+                        let x = coloring(segment.lost, selectedDataType,false);
+                        color = "hsl(" + x + ", 100%, 50%)";
                     }
                 
                 }    
@@ -680,12 +917,12 @@ function render_coordinates_mode(coordinates_data, post, selectedDataType,hours)
                 return(
                     <CircleMarker center={[segment.lat, segment.long]} radius={2}
                     pathOptions={{ color: color }}
-                    opacity={"15%"}
+                    opacity={"10%"}
                     eventHandlers={{
                         //check the heat value and show the popup with the right data                         
                         mouseover: (event) => {
                             if(selectedDataType === "bitrate"){
-                                event.target.bindPopup("Bitrate: " + segment.bitrate + " kbps on "+ p).openPopup();
+                                event.target.bindPopup("Bitrate: " + segment.bitrate + " Mbps on "+ p).openPopup();
                             }
                             if(selectedDataType === "jitter"){
                                 event.target.bindPopup("Jitter: " + segment.jitter + " ms on "+ p).openPopup();
@@ -705,5 +942,4 @@ function render_coordinates_mode(coordinates_data, post, selectedDataType,hours)
         })
     }
 }
-
 export default Map;
