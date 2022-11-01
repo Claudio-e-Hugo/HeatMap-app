@@ -2,12 +2,10 @@ import React from 'react';
 import {
     MapContainer,
     Polyline,
-    Popup,
     TileLayer,
     Marker,
     CircleMarker,
     Tooltip,
-    useMap
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css'
 import {Control, Icon} from 'leaflet'
@@ -18,6 +16,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import { styled } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
+import Filter from './Filter';
 
 //import Legend leaflet from 'leaflet';
 
@@ -74,6 +73,12 @@ const Puller = styled(Box)(({ theme }) => ({
 function Map(props) {
     const [coords, setCoords] = useState({});
     const [showLine, setShowLine] = useState([]);
+
+    const [selectedDataType, setSelectedDataType] = useState('bitrate');
+    const [post, setPost] = useState([]);
+    const [mode, setMode] = useState('segmented');
+    const [bestMode, setBestMode] = useState(false);
+    const [hours,setSelectedHours]=useState('All time');
 
     useEffect(() => {
         fetch('/get_lines', {
@@ -292,12 +297,12 @@ function Map(props) {
     }
 
     function legend(){
-        if (props.selectedDataType === 'bitrate') {
+        if (selectedDataType === 'bitrate') {
             return (
                 <Card style={{ width: '10rem',margin:'auto'}}>
                                     <div class='my-legend'>
                                         
-                                        <div class='legend-scale' style={{marginTop:'1rem',visibility:props.selectedDataType=='bitrate'? "visible":"hidden"}}>
+                                        <div class='legend-scale' style={{marginTop:'1rem',visibility:selectedDataType=='bitrate'? "visible":"hidden"}}>
                                             <h5 style={{marginLeft:'1rem' }}>Bitrate</h5>
                                                 <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',  backgroundColor:'hsl(0, 100%, 50%)'}}></span>&#60;1 Mbps<br/>
                                                 <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',  backgroundColor:'hsl(20, 100%, 50%)'}}></span>&#60;2 Mbps<br/>
@@ -313,12 +318,12 @@ function Map(props) {
                                        
                                 </Card>
             )
-        }else if(props.selectedDataType === 'jitter'){
+        }else if(selectedDataType === 'jitter'){
                 return (
                     <Card style={{ width: '10rem',height:'15rem',margin:'auto'}}>
                                     <div class='my-legend'>
                                     
-                                        <div class='legend-scale' style={{marginTop:'1rem',visibility:props.selectedDataType=='jitter'? "visible":"hidden"}}>
+                                        <div class='legend-scale' style={{marginTop:'1rem',visibility:selectedDataType=='jitter'? "visible":"hidden"}}>
                                             <h5 style={{marginLeft:'1rem' }}>Jitter </h5>
                                                 <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.2rem',  backgroundColor:'hsl(120, 100%, 50%)'}}></span>&#60;0.3 ms<br/>
                                                 <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.2rem',  backgroundColor:'hsl(100, 100%, 50%)'}}></span>&#60;1 ms<br/>
@@ -335,13 +340,13 @@ function Map(props) {
                                     </div>
                                        
                                 </Card>
-                )}else if(props.selectedDataType === 'ploss'){
+                )}else if(selectedDataType === 'ploss'){
                 return (
                     <Card style={{ width: '10rem',height:'15rem',margin:'auto'}}>
                                     <div class='my-legend'>
                                         
 
-                                        <div class='legend-scale' style={{marginTop:'1rem',visibility:props.selectedDataType=='ploss'? "visible":"hidden"}}>
+                                        <div class='legend-scale' style={{marginTop:'1rem',visibility:selectedDataType=='ploss'? "visible":"hidden"}}>
                                             <h6 style={{marginLeft:'1rem' }}>Packet Loss </h6>
                                                 <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(120, 100%, 50%)'}}></span>&#60;10%<br/>
                                                 <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(80, 100%, 50%)'}}></span>&#60;30%<br/>
@@ -363,13 +368,13 @@ function Map(props) {
         }
 
     function cellLegend(){
-        if(props.post.includes('cell')){
-            if (props.selectedDataType === 'bitrate') {
+        if(post.includes('cell')){
+            if (selectedDataType === 'bitrate') {
                 return (
                     <Card style={{ width: '10rem',height:'15rem',margin:'auto'}}>
                                         <div class='my-legend'>
                                             
-                                            <div class='legend-scale' style={{marginTop:'1rem',visibility:props.selectedDataType=='bitrate'? "visible":"hidden"}}>
+                                            <div class='legend-scale' style={{marginTop:'1rem',visibility:selectedDataType=='bitrate'? "visible":"hidden"}}>
                                                 <h5 style={{marginLeft:'1rem' }}>Cell Bitrate</h5>
                                                     <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.6rem',  backgroundColor:'hsl(180, 100%, 50%)'}}></span>&#60;20 Mbps<br/>
                                                     <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.6rem',  backgroundColor:'hsl(220, 100%, 50%)'}}></span>&#60;40 Mbps<br/>
@@ -383,12 +388,12 @@ function Map(props) {
                                         
                                     </Card>
                 )
-            }else if(props.selectedDataType === 'jitter'){
+            }else if(selectedDataType === 'jitter'){
                     return (
                         <Card style={{ width: '10rem',height:'15rem',margin:'auto'}}>
                                         <div class='my-legend'>
                                         
-                                            <div class='legend-scale' style={{marginTop:'1rem',visibility:props.selectedDataType=='jitter'? "visible":"hidden"}}>
+                                            <div class='legend-scale' style={{marginTop:'1rem',visibility:selectedDataType=='jitter'? "visible":"hidden"}}>
                                                 <h5 style={{marginLeft:'1rem' }}> Cell Jitter</h5>
                                                     <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(180, 100%, 50%)'}}></span>&#60;0.3 ms<br/>
                                                     <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(220, 100%, 50%)'}}></span>&#60;0.7 ms<br/>
@@ -404,13 +409,13 @@ function Map(props) {
                                         </div>
                                         
                                     </Card>
-                    )}else if(props.selectedDataType === 'ploss'){
+                    )}else if(selectedDataType === 'ploss'){
                     return (
                         <Card style={{ width: '10rem',height:'15rem',margin:'auto'}}>
                                         <div class='my-legend'>
                                             
 
-                                            <div class='legend-scale' style={{marginTop:'1rem',visibility:props.selectedDataType=='ploss'? "visible":"hidden"}}>
+                                            <div class='legend-scale' style={{marginTop:'1rem',visibility:selectedDataType=='ploss'? "visible":"hidden"}}>
                                                 <h6 style={{marginLeft:'1rem' }}>Cell Packet Loss</h6>
                                                     <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(180, 100%, 50%)'}}></span>&#60;1%<br/>
                                                     <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(220, 100%, 50%)'}}></span>&#60;10%<br/>
@@ -443,19 +448,11 @@ function Map(props) {
             <div>
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-sm-1">
-                            <div class="float-left">
-                                {cellLegend()}
-                                
-                            </div>
+                        <div class="col-sm-3">
+                            <Filter setSelectedDataType={setSelectedDataType} setPost={setPost} post={post} setMode={setMode} setBestMode={setBestMode} mode={mode} bestMode={bestMode} setSelectedHours={setSelectedHours} hours={hours} />
                         </div>
-                        <div class="col-sm-1">
-                            <div class="float-right">
-                                {legend()}
-                            </div>
-                        </div>
-                        <div class="col-sm-8">
-                            <Card  sx={{marginBottom:'10rem', minWidth: '80vw', maxHeight: '90vh'}}>
+                        <div class="col-sm-7">
+                            <Card  sx={{marginBottom:'10rem', minWidth: '100%', maxHeight: '90vh'}}>
                                 <CardContent>
                                 <MapContainer when id="map-container"
                                     center={map_center}
@@ -479,10 +476,10 @@ function Map(props) {
                                 }
 
                                 {   
-                                    props.mode == 'segmented' ? 
-                                    render_segmented_mode(segmented_data, best_segmented_data, props.post, props.selectedDataType, props.bestMode,props.hours)
+                                    mode == 'segmented' ? 
+                                    render_segmented_mode(segmented_data, best_segmented_data, post, selectedDataType, bestMode, hours)
                                     :
-                                    render_coordinates_mode(coordinates_data, props.post, props.selectedDataType,props.hours) 
+                                    render_coordinates_mode(coordinates_data, post, selectedDataType, hours) 
                                 }
                                 
 
@@ -510,6 +507,17 @@ function Map(props) {
                             </MapContainer>
                                 </CardContent>
                             </Card> 
+                        </div>
+                        <div class="col-sm-1">
+                            <div class="float-float">
+                                {cellLegend()}
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-1">
+                            <div class="float-right">
+                                {legend()}
+                            </div>
                         </div>
                     </div>
                 </div>

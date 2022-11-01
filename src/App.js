@@ -28,9 +28,8 @@ export default function App() {
                 </div>
                 <div class="row">
                     <div class="col">
-                        <Filter setSelectedDataType={setSelectedDataType} setPost={setPost} post={post} setMode={setMode} setBestMode={setBestMode} mode={mode} bestMode={bestMode} setSelectedHours={setSelectedHours} hours={hours} />
+                        {/* <Filter setSelectedDataType={setSelectedDataType} setPost={setPost} post={post} setMode={setMode} setBestMode={setBestMode} mode={mode} bestMode={bestMode} setSelectedHours={setSelectedHours} hours={hours} /> */}
                         <Map pole={pole} selectedDataType={selectedDataType} post={post} mode={mode} bestMode={bestMode} hours={hours}> </Map>
-                        
                     </div>
                 </div>
             </div>
