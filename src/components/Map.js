@@ -130,26 +130,27 @@ function Map(props) {
                         if (p==="cell"){
                             
                             if(selectedDataType === "bitrate" ){
-                                let x = coloring(segment.bitrate, selectedDataType,true);
+                                let x = coloring(data_post[segment].bitrate, selectedDataType,true);
+                                
                                 color = "hsl(" + x + ", 100%, 50%)";
                             } else if(selectedDataType === "jitter"){
-                                let x=coloring(segment.jitter,selectedDataType,true);
+                                let x=coloring(data_post[segment].jitter,selectedDataType,true);
                                 console.log(x);
                                 color = "hsl(" + x + ", 100%, 50%)";  
                             } else if(selectedDataType === "ploss"){ 
-                                let x=coloring(segment.lost,selectedDataType,true);
+                                let x=coloring(data_post[segment].lost,selectedDataType,true);
                                 color = "hsl(" + (x) + ", 100%, 50%)";  
                             }
                         }else{
                             if(selectedDataType === "bitrate" ){
-                                let x = coloring(segment.bitrate, selectedDataType,false);
+                                let x = coloring(data_post[segment].bitrate, selectedDataType,false);
                                 color = "hsl(" + x + ", 100%, 50%)";
                             } else if(selectedDataType === "jitter"){
-                                let x=coloring(segment.jitter,selectedDataType,false);
+                                let x=coloring(data_post[segment].jitter,selectedDataType,false);
                                 console.log(x);
                                 color = "hsl(" + x + ", 100%, 50%)";  
                             } else if(selectedDataType === "ploss"){ 
-                                let x=coloring(segment.lost,selectedDataType,false);
+                                let x=coloring(data_post[segment].lost,selectedDataType,false);
                                 color = "hsl(" + x + ", 100%, 50%)";  
                             }
                         }
@@ -184,30 +185,21 @@ function Map(props) {
                     aux = [[ [aux[0], aux[1]], [aux[2], aux[3]] ]];
                     var values = best_segmented_data[segment];
                     if(selectedDataType === "bitrate" ){
-                        let x = coloring(data.bitrate, true);
-                        if (x <= 120) {
-                            color = "hsl(" + x + ", 100%, 50%)";
-                        } else {
-                            color = "hsl(" + 120 + ", 100%, 50%)";
-                            
-                        }
+                        let x = coloring(data.bitrate,selectedDataType, true);
+                        
+                        color = "hsl(" + x + ", 100%, 50%)";
+                      
                         
                     } else if(selectedDataType === "jitter"){
-                        let x=120 - data.jitter
-                        if(x<0){
-                            x=0;
-                        }else if(x>120){
-                            x=120;
-                        }
-                        color = "hsl(" + (x) + ", 100%, 50%)";  
+                        let x = coloring(data.jitter,selectedDataType, true);
+                        
+                        color = "hsl(" + x + ", 100%, 50%)";
+                       
                     } else if(selectedDataType === "ploss"){ 
-                        let x=120 - data.lost
-                        if(x<0){
-                            x=0;
-                        }else if(x>120){
-                            x=120;
-                        }
-                        color = "hsl(" + (x) + ", 100%, 50%)";  
+                        let x = coloring(data.lost,selectedDataType, true);
+                        
+                        color = "hsl(" + x + ", 100%, 50%)";
+                        
                     }
                     
     
@@ -528,12 +520,10 @@ function coloring(x ,selectedDataType,cell) {
     if (cell){
         if (selectedDataType === 'bitrate') {
             if (x<20){
-                bitrate=180;
-                
+                bitrate=180;  
             }
             else if (x<40){
                 bitrate= 220;
-               
             }
             else if (x<60){
                 bitrate= 260;
@@ -644,10 +634,9 @@ function coloring(x ,selectedDataType,cell) {
     }
     
     if (selectedDataType === 'bitrate') {
+        
         return bitrate;
     } else if (selectedDataType === 'jitter') {
-        
-
         return jitter;
     } else if (selectedDataType === 'ploss') {
         return ploss;
@@ -888,6 +877,7 @@ function render_coordinates_mode(coordinates_data, post, selectedDataType,hours)
                         // }
                         // color = "hsl(" + (x) + ", 100%, 50%)";
                         let x = coloring(segment.bitrate, selectedDataType,false);
+                        
                         color = "hsl(" + x + ", 100%, 50%)";
                     } else if(selectedDataType === "jitter"){
                         // let x=120 - segment.jitter
