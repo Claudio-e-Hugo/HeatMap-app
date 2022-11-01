@@ -7,7 +7,6 @@ import logo from './imgs/imminence.png';
 import it from './imgs/it.png';
 import wavecom from './imgs/wavecom.png';
 import pole from './imgs/pole.png';
-import { Scale } from '@mui/icons-material';
 
 export default function App() {
     const [selectedDataType, setSelectedDataType] = useState('bitrate');
