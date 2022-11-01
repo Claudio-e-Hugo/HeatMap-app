@@ -32,7 +32,9 @@ const post_coords = {
     'p15': [40.64416, -8.65616],
     'p19' : [40.64339, -8.65847],
     'p3' : [40.64074, -8.65705],
-    'p5' : [40.64088, -8.65397]
+    'p5' : [40.64088, -8.65397],
+    'p35' : [40.63028, -8.65423],
+    'p26' : [40.63848, -8.65147]
 };
 
 
@@ -121,11 +123,12 @@ function Map(props) {
     }, []);
 
 
-    function render_segmented_mode(segmented_data, best_segmented_data, post, selectedDataType, bestMode,hours) {
+    function render_segmented_mode(segmented_data, best_segmented_data, post, selectedDataType, bestMode, hours) {
         if(!bestMode) {
             if (segmented_data != null) {
                 return post.map((p) => {
                     var data_post = segmented_data[p];
+                    console.log(data_post);
                     return Object.keys(data_post).map((segment) => {
                         var aux = segment.replace('[[', '').replace(']]', '').replace('[', '').replace(']', '').split(",").map(Number);
                         aux = [[ [aux[0], aux[1]], [aux[2], aux[3]] ]];
@@ -474,28 +477,20 @@ function Map(props) {
                                     render_coordinates_mode(coordinates_data, post, selectedDataType, hours) 
                                 }
                                 
+                                {
+                                    Object.keys(post_coords).map((post_id) => {
+                                        return (
 
-                                <Marker position={p15_coords}  icon={new Icon({iconUrl: props.pole, iconSize: [50, 50], iconAnchor: [22, 42]})} >
-                                    {/* label */}
-                                    <Tooltip position={p15_coords} offset={[0, 0]} opacity={0.8} permanent={true}>
-                                        <span>p15</span>
-                                    </Tooltip>
-                                </Marker>
-                                <Marker position={p19_coords} icon={new Icon({iconUrl: props.pole, iconSize: [50, 50], iconAnchor: [12, 41]})}>
-                                <Tooltip position={p19_coords} offset={[0, 0]} opacity={0.8} permanent={true}>
-                                        <span>p19</span>
-                                    </Tooltip>
-                                </Marker>
-                                <Marker position={p3_coords} icon={new Icon({iconUrl: props.pole, iconSize: [50, 50], iconAnchor: [12, 41]})}>
-                                <Tooltip position={p3_coords} offset={[0, 0]} opacity={0.8} permanent={true}>
-                                        <span>p3</span>
-                                    </Tooltip>
-                                </Marker>
-                                <Marker position={p5_coords} icon={new Icon({iconUrl: props.pole, iconSize: [50, 50], iconAnchor: [12, 41]})}>
-                                <Tooltip position={p5_coords} offset={[0, 0]} opacity={0.8} permanent={true}>
-                                        <span>p5</span>
-                                    </Tooltip>
-                                </Marker>
+                                            <Marker position={post_coords[post_id]}  icon={new Icon({iconUrl: props.pole, iconSize: [50, 50], iconAnchor: [22, 42]})} >
+                                                <Tooltip position={post_coords[post_id]} offset={[0, 0]} opacity={0.8} permanent={true}>
+                                                    <span>{post_id}</span>
+                                                </Tooltip>
+                                            </Marker>
+                                        );
+                                        
+                                    })
+                                }
+
                             </MapContainer>
                                 </CardContent>
                             </Card> 

@@ -136,7 +136,7 @@ function Filter(props) {
                                 <Card sx={{marginBottom:'10rem', minWidth: '100%', maxHeight: '90vh'}}>
                                     <CardContent>
                                         <FormGroup>
-                                        <FormControlLabel control={<Switch onChange={handleSwitchChange} defaultChecked />} label="Mode" />
+                                            <FormControlLabel control={<Switch onChange={handleSwitchChange} defaultChecked />} label="Mode" />
                                         </FormGroup>
                                         {
                                             props.mode == 'segmented' ?
@@ -187,6 +187,18 @@ function Filter(props) {
                                                                     <Checkbox value="p5" onChange={handleChangeCheckBox}/>
                                                                     }
                                                                     label="P5"
+                                                                />
+                                                                <FormControlLabel
+                                                                    control={
+                                                                    <Checkbox value="p35" onChange={handleChangeCheckBox}/>
+                                                                    }
+                                                                    label="P35"
+                                                                />
+                                                                <FormControlLabel
+                                                                    control={
+                                                                    <Checkbox value="p26" onChange={handleChangeCheckBox}/>
+                                                                    }
+                                                                    label="P26"
                                                                 />
 
                                                             </div>
@@ -254,6 +266,18 @@ function Filter(props) {
                                                                     <Checkbox value="p5" onChange={handleChangeCheckBox}/>
                                                                     }
                                                                     label="P5"
+                                                                />
+                                                                <FormControlLabel
+                                                                    control={
+                                                                    <Checkbox value="p35" onChange={handleChangeCheckBox}/>
+                                                                    }
+                                                                    label="P35"
+                                                                />
+                                                                <FormControlLabel
+                                                                    control={
+                                                                    <Checkbox value="p26" onChange={handleChangeCheckBox}/>
+                                                                    }
+                                                                    label="P26"
                                                                 />
                                                             </div>
                                                         </div>
