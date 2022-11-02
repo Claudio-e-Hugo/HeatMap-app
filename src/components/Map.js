@@ -139,13 +139,8 @@ function Map(props) {
 
     useEffect(() => {
         if(loopMode === true) {
+            setSelectedHours(times_list[0]);
             const interval = setInterval(() => {
-                console.log("Begining to run");
-                console.log(hours);
-                console.log(idx);
-                console.log(Intervals);
-                console.log(times_list[idx].toString());
-                console.log(Intervals[times_list[idx].toString()]);
                 setSelectedHours(times_list[idx++]);
                 if(idx > times_list.length-1) {
                     idx = 0;
@@ -155,6 +150,7 @@ function Map(props) {
             return () => clearInterval(interval);
         } else {
             setSelectedHours('All time');
+            idx = 0;
         }
     }, [loopMode]);
     
@@ -549,12 +545,11 @@ function Map(props) {
                                 
                             </div>
                             <div>
-                                
                                 {
                                     loopMode == true ?
                                         <Card>
                                             <CardContent>
-                                                <span>Hours: {Intervals[hours.toString()]}</span>
+                                                <span>Day Interval: {Intervals[hours.toString()]} Hours: [ {hours[0]}, {hours[1]} ]</span>
                                             </CardContent>
                                         </Card>
                                     :
@@ -711,8 +706,15 @@ function coloring(x ,selectedDataType,cell) {
 function render_coordinates_mode(coordinates_data, post, selectedDataType, loopMode, hours) {
 
     if (coordinates_data != null) {
+
         return post.map((p) => {
-            var data_post = coordinates_data[p];
+            if(selectedDataType === 'bitrate') {
+                var data_post = coordinates_data[p].sort((a,b) => a.bitrate > b.bitrate ? 1 : -1);
+            } else if (selectedDataType === 'jitter') {
+                var data_post = coordinates_data[p].sort((a,b) => a.jitter > b.jitter ? 1 : -1);
+            } else if (selectedDataType == 'ploss') {
+                var data_post = coordinates_data[p].sort((a,b) => a.lost > b.lost ? 1 : -1);
+            }
             if (hours =='All time') {
                 data_post = coordinates_data[p];
             }else{
@@ -725,49 +727,24 @@ function render_coordinates_mode(coordinates_data, post, selectedDataType, loopM
                         color = "hsl(" + x + ", 100%, 50%)";
                     } else if(selectedDataType === "jitter"){
                         let x=coloring(segment.jitter,selectedDataType,true);
-                        console.log(x);
                         color = "hsl(" + x + ", 100%, 50%)";  
                     } else if(selectedDataType === "ploss"){ 
                         let x=coloring(segment.lost,selectedDataType,true);
                         color = "hsl(" + (x) + ", 100%, 50%)";  
                     }
-
+                    
                 }else{
                     if(selectedDataType === "bitrate" ){
-                        // let x= (segment.bitrate);
-                        // if(x<0){
-                        //     x=0;
-                        // }else if(x>120){
-                        //     x=120;
-                        // }
-                        // color = "hsl(" + (x) + ", 100%, 50%)";
-                        let x = coloring(segment.bitrate, selectedDataType,false);
-                        
+                        let x = coloring(segment.bitrate, selectedDataType,false);                     
                         color = "hsl(" + x + ", 100%, 50%)";
                     } else if(selectedDataType === "jitter"){
-                        // let x=120 - segment.jitter
-                        // if(x<0){
-                        //     x=0;
-                        // }else if(x>120){
-                        //     x=120;
-                        // }
-                        // color = "hsl(" + (x) + ", 100%, 50%)";
                         let x = coloring(segment.jitter, selectedDataType,false);
                         color = "hsl(" + x + ", 100%, 50%)";  
                     } else if(selectedDataType === "ploss"){ 
-                        // let x=120 - segment.lost
-                        // if(x<0){
-                        //     x=0;
-                        // }else if(x>120){
-                        //     x=120;
-                        // }
-                        // color = "hsl(" + (x) + ", 100%, 50%)";  
                         let x = coloring(segment.lost, selectedDataType,false);
                         color = "hsl(" + x + ", 100%, 50%)";
                     }
-                
                 }    
-                
                 
                 return(
                     <CircleMarker center={[segment.lat, segment.long]} radius={2}
