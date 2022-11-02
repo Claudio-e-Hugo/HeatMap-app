@@ -173,7 +173,7 @@ function Filter(props) {
                                                                     control={
                                                                     <Checkbox value="cell" onChange={handleChangeCheckBox}/>
                                                                     }
-                                                                    label="Cell"
+                                                                    label="5G"
                                                                 />
                                                                 <FormControlLabel
                                                                     control={
@@ -253,7 +253,7 @@ function Filter(props) {
                                                                     control={
                                                                     <Checkbox value="cell" onChange={handleChangeCheckBox}/>
                                                                     }
-                                                                    label="Cell"
+                                                                    label="5G"
                                                                 />
                                                                 <FormControlLabel
                                                                     control={
