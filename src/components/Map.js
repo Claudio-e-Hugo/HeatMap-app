@@ -38,6 +38,16 @@ const post_coords = {
 };
 
 
+//day hours filter
+const Intervals = {
+    //60:00 to 08:00
+    "0,12" : 'Morning',
+    "12,20": 'Early evening',
+    "20,23" : 'Afternoon',
+    "0,6"  : 'Night',
+};
+
+
 var segmented_data = null;
 var coordinates_data = null;
 var best_segmented_data = null;
@@ -80,6 +90,7 @@ function Map(props) {
     const [post, setPost] = useState([]);
     const [mode, setMode] = useState('segmented');
     const [bestMode, setBestMode] = useState(false);
+    const [loopMode, setLoopMode] = useState(false);
     const [hours,setSelectedHours]=useState('All time');
 
     useEffect(() => {
@@ -122,6 +133,31 @@ function Map(props) {
         );
     }, []);
 
+
+    const times_list = [[0,12], [12,20], [20,23], [0, 6]];
+    var idx = 0;
+
+    useEffect(() => {
+        if(loopMode === true) {
+            const interval = setInterval(() => {
+                console.log("Begining to run");
+                console.log(hours);
+                console.log(idx);
+                console.log(Intervals);
+                console.log(times_list[idx].toString());
+                console.log(Intervals[times_list[idx].toString()]);
+                setSelectedHours(times_list[idx++]);
+                if(idx > times_list.length-1) {
+                    idx = 0;
+                }
+                
+            }, 5000);
+            return () => clearInterval(interval);
+        } else {
+            setSelectedHours('All time');
+        }
+    }, [loopMode]);
+    
 
     function render_segmented_mode(segmented_data, best_segmented_data, post, selectedDataType, bestMode, hours) {
         if(!bestMode) {
@@ -444,7 +480,7 @@ function Map(props) {
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-3">
-                            <Filter setSelectedDataType={setSelectedDataType} setPost={setPost} post={post} setMode={setMode} setBestMode={setBestMode} mode={mode} bestMode={bestMode} setSelectedHours={setSelectedHours} hours={hours} />
+                            <Filter setSelectedDataType={setSelectedDataType} setPost={setPost} post={post} setMode={setMode} setBestMode={setBestMode} mode={mode} bestMode={bestMode} setSelectedHours={setSelectedHours} hours={hours} setLoopMode={setLoopMode} />
                         </div>
                         <div class="col-sm-7">
                             <Card  sx={{marginBottom:'10rem', minWidth: '100%', maxHeight: '90vh'}}>
@@ -474,7 +510,7 @@ function Map(props) {
                                     mode == 'segmented' ? 
                                     render_segmented_mode(segmented_data, best_segmented_data, post, selectedDataType, bestMode, hours)
                                     :
-                                    render_coordinates_mode(coordinates_data, post, selectedDataType, hours) 
+                                    render_coordinates_mode(coordinates_data, post, selectedDataType, loopMode, hours) 
                                 }
                                 
                                 {
@@ -499,6 +535,19 @@ function Map(props) {
                             <div class="float-float">
                                 {cellLegend()}
                                 
+                            </div>
+                            <div>
+                                
+                                {
+                                    loopMode == true ?
+                                        <Card>
+                                            <CardContent>
+                                                <span>Hours: {Intervals[hours.toString()]}</span>
+                                            </CardContent>
+                                        </Card>
+                                    :
+                                        null
+                                }
                             </div>
                         </div>
                         <div class="col-sm-1">
@@ -647,207 +696,8 @@ function coloring(x ,selectedDataType,cell) {
     
 }
 
-// function render_segmented_mode(segmented_data, best_segmented_data, post, selectedDataType, bestMode) {
-//     if(!bestMode) {
-//         if (segmented_data != null) {
-//             return post.map((p) => {
-//                 var data_post = segmented_data[p];
-//                 return Object.keys(data_post).map((segment) => {
-//                     var aux = segment.replace('[[', '').replace(']]', '').replace('[', '').replace(']', '').split(",").map(Number);
-//                     aux = [[ [aux[0], aux[1]], [aux[2], aux[3]] ]];
-//                     var values = data_post[segment];
-//                     //if radio button is selected, show the circles
-//                     if (post.includes("cell")){
-//                         if(selectedDataType === "bitrate" ){
-//                             let x = coloringBitrate(values.bitrate, true);
-//                             if (x <= 120) {
-//                                 color = "hsl(" + x + ", 100%, 50%)";
-//                             } else {
-//                                 color = "hsl(" + 120 + ", 100%, 50%)";
-                                
-//                             }
-//                         } else if(selectedDataType === "jitter"){
-//                             let x=120 - values.jitter
-//                             if(x<0){
-//                                 x=0;
-//                             }else if(x>120){
-//                                 x=120;
-//                             }
-//                             color = "hsl(" + (x) + ", 100%, 50%)";  
-//                         } else if(selectedDataType === "ploss"){ 
-//                             let x=120 - values.lost
-//                             if(x<0){
-//                                 x=0;
-//                             }else if(x>120){
-//                                 x=120;
-//                             }
-//                             color = "hsl(" + (x) + ", 100%, 50%)";  
-//                         }
-//                     }else{
-//                         if(selectedDataType === "bitrate" ){
-//                             let x= (values.bitrate);
-//                             if(x<0){
-//                                 x=0;
-//                             }else if(x>120){
-//                                 x=120;
-//                             }
-//                             color = "hsl(" + (x*20) + ", 100%, 50%)";
-//                         } else if(selectedDataType === "jitter"){
-//                             let x=120 - values.jitter
-//                             if(x<0){
-//                                 x=0;
-//                             }else if(x>120){
-//                                 x=120;
-//                             }
-//                             color = "hsl(" + (x) + ", 100%, 50%)";  
-//                         } else if(selectedDataType === "ploss"){ 
-//                             let x=120 - values.lost
-//                             if(x<0){
-//                                 x=0;
-//                             }else if(x>120){
-//                                 x=120;
-//                             }
-//                             color = "hsl(" + (x) + ", 100%, 50%)";  
-//                         }
-//                     }
-//                     return (
-//                         <Polyline key={segment} pathOptions={{ color: color }} positions={aux}
-//                             eventHandlers={{
-//                                 //check the heat value and show the popup with the right data                    
-//                                 mouseover: (event) => {
-//                                     if(selectedDataType === "bitrate"){
-//                                         event.target.bindPopup("Bitrate: " + values.bitrate + " Mbps on " + p).openPopup();
-//                                     }
-//                                     if(selectedDataType === "jitter"){
-//                                         event.target.bindPopup("Jitter: " + values.jitter + " ms on " + p).openPopup();
-//                                     }
-//                                     if(selectedDataType === "ploss"){
-//                                         event.target.bindPopup("Packet Loss: " + values.lost + " % on " + p).openPopup();
-//                                     }
-//                                     event.target.openPopup()},
-//                                 mouseout: (event) => event.target.closePopup(),
-            
-//                             }}
-//                         />
-//                     )
-//                 })
-//             })
-//         }
-//     } else {
-//         if (best_segmented_data != null) {
-//             return Object.keys(best_segmented_data).map((segment) => {
-//                 var data = best_segmented_data[segment];
+function render_coordinates_mode(coordinates_data, post, selectedDataType, loopMode, hours) {
 
-//                 var aux = segment.replace('[[', '').replace(']]', '').replace('[', '').replace(']', '').split(",").map(Number);
-//                 aux = [[ [aux[0], aux[1]], [aux[2], aux[3]] ]];
-//                 var values = best_segmented_data[segment];
-
-//                 if(data.best_post == 'cell'){
-//                     if(selectedDataType === "bitrate" ){
-//                         let x = coloringBitrate(data.bitrate, true);
-//                         if (x <= 120) {
-//                             color = "hsl(" + x + ", 100%, 50%)";
-//                         } else {
-//                             color = "hsl(" + 120 + ", 100%, 50%)";
-                            
-//                         }
-                    
-//                     } else if(selectedDataType === "jitter"){
-//                         let x=120 - data.jitter
-//                         if(x<0){
-//                             x=0;
-//                         }else if(x>120){
-//                             x=120;
-//                         }
-//                         color = "hsl(" + (x) + ", 100%, 50%)";  
-//                     } else if(selectedDataType === "ploss"){ 
-//                         let x=120 - data.lost
-//                         if(x<0){
-//                             x=0;
-//                         }else if(x>120){
-//                             x=120;
-//                         }
-//                         color = "hsl(" + (x) + ", 100%, 50%)";  
-//                     }
-//                 } else {
-//                     if(selectedDataType === "bitrate" ){
-//                         let x= (data.bitrate);
-//                         if(x<0){
-//                             x=0;
-//                         }else if(x>120){
-//                             x=120;
-//                         }
-//                         color = "hsl(" + (x*15) + ", 100%, 50%)";
-//                     } else if(selectedDataType === "jitter"){
-//                         let x=120 - data.jitter
-//                         if(x<0){
-//                             x=0;
-//                         }else if(x>120){
-//                             x=120;
-//                         }
-//                         color = "hsl(" + (x) + ", 100%, 50%)";  
-//                     } else if(selectedDataType === "ploss"){ 
-//                         let x=120 - data.lost
-//                         if(x<0){
-//                             x=0;
-//                         }else if(x>120){
-//                             x=120;
-//                         }
-//                         color = "hsl(" + (x) + ", 100%, 50%)";  
-//                     }
-//                 }
-
-//                 return (
-//                     <div>
-//                         <Polyline key={best_segmented_data[segment]} pathOptions={{ color: color }} positions={aux}
-//                             eventHandlers={{
-//                                 //check the heat value and show the popup with the right data                    
-//                                 mouseover: (event) => {
-//                                     if(selectedDataType === "bitrate"){
-//                                         event.target.bindPopup("Bitrate: " + values.bitrate + " Mbps on " + best_segmented_data[segment].best_post).openPopup();
-//                                     }
-//                                     if(selectedDataType === "jitter"){
-//                                         event.target.bindPopup("Jitter: " + values.jitter + " ms on " + best_segmented_data[segment].best_post).openPopup();
-//                                     }
-//                                     if(selectedDataType === "ploss"){
-//                                         event.target.bindPopup("Packet Loss: " + values.lost + " % on " + best_segmented_data[segment].best_post).openPopup();
-//                                     }
-//                                     event.target.openPopup()},
-//                                 mouseout: (event) => event.target.closePopup(),
-            
-//                             }}
-//                         />
-//                         <CircleMarker
-//                             center={[best_segmented_data[segment].lat_bitrate, best_segmented_data[segment].long_bitrate]}
-//                             radius={4}
-//                             eventHandlers={{
-//                                 mouseover: (event) => {
-//                                     showLine = [center, [40.64416, -8.65616]];
-//                                     console.log(showLine);
-//                                 },
-//                                 mouseout: (event) => {
-//                                     showLine = [];
-//                                     console.log(showLine);
-//                                 }
-//                             }}
-//                         />
-//                         {
-//                             showLine != [] ?
-//                                 <Polyline
-//                                 positions={showLine}
-//                                 />
-//                             :
-//                             null
-//                         }
-//                     </div>
-//                 )
-                
-//             });
-//         }
-//     }
-// }
-
-function render_coordinates_mode(coordinates_data, post, selectedDataType,hours) {
     if (coordinates_data != null) {
         return post.map((p) => {
             var data_post = coordinates_data[p];
@@ -935,4 +785,6 @@ function render_coordinates_mode(coordinates_data, post, selectedDataType,hours)
         })
     }
 }
+
+
 export default Map;

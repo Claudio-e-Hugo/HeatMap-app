@@ -13,6 +13,7 @@ export default function App() {
     const [post, setPost] = useState([]);
     const [mode, setMode] = useState('segmented');
     const [bestMode, setBestMode] = useState(false);
+    const [loopMode, setLoopMode] = useState(false);
     const [hours,setSelectedHours]=useState('All time');
 
     return (
@@ -28,7 +29,7 @@ export default function App() {
                 <div class="row">
                     <div class="col">
                         {/* <Filter setSelectedDataType={setSelectedDataType} setPost={setPost} post={post} setMode={setMode} setBestMode={setBestMode} mode={mode} bestMode={bestMode} setSelectedHours={setSelectedHours} hours={hours} /> */}
-                        <Map pole={pole} selectedDataType={selectedDataType} post={post} mode={mode} bestMode={bestMode} hours={hours}> </Map>
+                        <Map pole={pole} selectedDataType={selectedDataType} post={post} mode={mode} bestMode={bestMode} hours={hours} loopMode={loopMode}> </Map>
                     </div>
                 </div>
             </div>

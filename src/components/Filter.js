@@ -25,7 +25,7 @@ const Intervals = [
     { value: 'Early evening',hours: '12:00-18:00' },
     { value: 'Afternoon',hours: '18:00,00:00' },
     { value: 'Night',hours: '00:00,06:00' },
-    ];
+];
 
 
 
@@ -107,25 +107,24 @@ function Filter(props) {
             props.setBestMode(false);
         }
     }
-
+    
+    const handleChangeLoopMode = (event) => {
+        if(event.target.checked){
+            props.setLoopMode(true);
+        } else {
+            props.setLoopMode(false);
+        }
+    }
+    
     const handleSwitchChange = (event) => {
         if(event.target.checked) {
             props.setMode('segmented');
+            props.setPost([]);
         } else {
             props.setMode('coordinates');
+            props.setPost([]);
         }
     }
-
-    // // swipe drawer variables
-    // const { window } = props;
-    // const [open, setOpen] = React.useState(false);
-  
-    // const toggleDrawer = (newOpen) => () => {
-    //   setOpen(newOpen);
-    // };
-  
-    // // This is used only for the example
-    // const container = window !== undefined ? () => window().document.body : undefined;
 
     return (
             <div>
@@ -218,6 +217,7 @@ function Filter(props) {
                                                         />
                                                     </FormGroup>
                                                     </div>
+                                                    
                                                 </div>
                                             :
                                                     <div class="row">
@@ -307,7 +307,21 @@ function Filter(props) {
                                                             </Select>
                                                         </FormControl>
                                                     </div>
+
+                                                    <div>
+                                                    
+                                                    <FormGroup>
+                                                        <FormControlLabel
+                                                            control={
+                                                            <Checkbox value="loop" onChange={handleChangeLoopMode}/>
+                                                            }
+                                                            label="Loop Mode"
+                                                        />
+                                                    </FormGroup>
+                                                    </div>
+
                                                 </div>
+                                                
                                         }
                                     </CardContent>
                                 </Card>
