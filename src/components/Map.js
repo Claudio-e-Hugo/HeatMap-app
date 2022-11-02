@@ -434,12 +434,13 @@ function Map(props) {
                                         
                                             <div class='legend-scale' style={{marginTop:'1rem',visibility:selectedDataType=='jitter'? "visible":"hidden"}}>
                                                 <h5 style={{marginLeft:'1rem' }}> 5G Jitter</h5>
-                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(180, 100%, 50%)'}}></span>&#60;0.3 ms<br/>
-                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(220, 100%, 50%)'}}></span>&#60;0.7 ms<br/>
-                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(240, 100%, 50%)'}}></span>&#60;1 ms<br/>
-                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(260, 100%, 50%)'}}></span>&#60;5 ms<br/>
-                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(280, 100%, 50%)'}}></span>&#60;10 ms<br/>
-                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(300, 100%, 50%)'}}></span>&ge;10 ms<br/>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.3rem',  backgroundColor:'hsl(180, 100%, 50%)'}}></span>&#60;0.3 ms<br/>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.3rem',  backgroundColor:'hsl(210, 100%, 50%)'}}></span>&#60;0.7 ms<br/>
+                                                    {/* <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.3rem',  backgroundColor:'hsl(210, 100%, 50%)'}}></span>&#60;0.8 ms<br/> */}
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.3rem',  backgroundColor:'hsl(240, 100%, 50%)'}}></span>&#60;1 ms<br/>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.3rem',  backgroundColor:'hsl(270, 100%, 50%)'}}></span>&#60;10 ms<br/>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.3rem',  backgroundColor:'hsl(290, 100%, 50%)'}}></span>&#60;100 ms<br/>
+                                                    <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.3rem',  backgroundColor:'hsl(320, 100%, 50%)'}}></span>&ge;100 ms<br/>
                                                     
                                             </div>
                                             
@@ -597,18 +598,21 @@ function coloring(x ,selectedDataType,cell) {
                 jitter=180;        
             }
             else if (x<0.7){
-                jitter= 220;
+                jitter= 210;
             }
+            // else if (x<0.8){
+            //     jitter= 240;
+            // }
             else if (x<1){
                 jitter= 240;  
-            }
-            else if (x<5){
-                jitter= 260;   
+             
             }else if(x<10) {
-                jitter= 280;
+                jitter= 270;
             }
-            else{
-                jitter= 300;
+            else if(x<100){
+                jitter= 290;
+            }else{
+                jitter= 320;
                 
             }
         } else if (selectedDataType === 'ploss') {
