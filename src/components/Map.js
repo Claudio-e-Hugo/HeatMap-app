@@ -193,18 +193,30 @@ function Map(props) {
                     aux = [[ [aux[0], aux[1]], [aux[2], aux[3]] ]];
                     var values = best_segmented_data[segment];
                     if(selectedDataType === "bitrate" ){
-                        let x = coloring(data.bitrate,selectedDataType, true);
+                        let cell=false;
+                        if (best_segmented_data[segment].best_post_bitrate==="cell"){
+                            cell=true;
+                        }
+                        let x = coloring(data.bitrate,selectedDataType, cell);
                         
                         color = "hsl(" + x + ", 100%, 50%)";
                       
                         
                     } else if(selectedDataType === "jitter"){
-                        let x = coloring(data.jitter,selectedDataType, true);
+                        let cell=false;
+                        if (best_segmented_data[segment].best_post_jitter==="cell"){
+                            cell=true;
+                        }
+                        let x = coloring(data.jitter,selectedDataType, cell);
                         
                         color = "hsl(" + x + ", 100%, 50%)";
                        
                     } else if(selectedDataType === "ploss"){ 
-                        let x = coloring(data.lost,selectedDataType, true);
+                        let cell=false;
+                        if (best_segmented_data[segment].best_post_lost==="cell"){
+                            cell=true;
+                        }
+                        let x = coloring(data.lost,selectedDataType, cell);
                         
                         color = "hsl(" + x + ", 100%, 50%)";
                         
@@ -294,11 +306,11 @@ function Map(props) {
     function legend(){
         if (selectedDataType === 'bitrate') {
             return (
-                <Card style={{ width: '10rem',margin:'auto'}}>
+                <Card style={{ width: '8rem',margin:'auto'}}>
                                     <div class='my-legend'>
                                         
                                         <div class='legend-scale' style={{marginTop:'1rem',visibility:selectedDataType=='bitrate'? "visible":"hidden"}}>
-                                            <h5 style={{marginLeft:'1rem' }}>Bitrate</h5>
+                                            <h6 style={{marginLeft:'1rem' }}>ITS-G5 Bitrate</h6>
                                                 <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',  backgroundColor:'hsl(0, 100%, 50%)'}}></span>&#60;1 Mbps<br/>
                                                 <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',  backgroundColor:'hsl(20, 100%, 50%)'}}></span>&#60;2 Mbps<br/>
                                                 <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',  backgroundColor:'hsl(40, 100%, 50%)'}}></span>&#60;3 Mbps<br/>
@@ -319,7 +331,7 @@ function Map(props) {
                                     <div class='my-legend'>
                                     
                                         <div class='legend-scale' style={{marginTop:'1rem',visibility:selectedDataType=='jitter'? "visible":"hidden"}}>
-                                            <h5 style={{marginLeft:'1rem' }}>Jitter </h5>
+                                            <h6 style={{marginLeft:'1rem' }}>ITS-G5 Jitter </h6>
                                                 <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.2rem',  backgroundColor:'hsl(120, 100%, 50%)'}}></span>&#60;0.3 ms<br/>
                                                 <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.2rem',  backgroundColor:'hsl(100, 100%, 50%)'}}></span>&#60;1 ms<br/>
                                                 <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.2rem',  backgroundColor:'hsl(80, 100%, 50%)'}}></span>&#60;5 ms<br/>
@@ -342,7 +354,7 @@ function Map(props) {
                                         
 
                                         <div class='legend-scale' style={{marginTop:'1rem',visibility:selectedDataType=='ploss'? "visible":"hidden"}}>
-                                            <h6 style={{marginLeft:'1rem' }}>Packet Loss </h6>
+                                            <h6 style={{marginLeft:'1rem' }}>ITS-G5 Packet Loss </h6>
                                                 <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(120, 100%, 50%)'}}></span>&#60;10%<br/>
                                                 <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(80, 100%, 50%)'}}></span>&#60;30%<br/>
                                                 <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(60, 100%, 50%)'}}></span>&#60;50%<br/>
@@ -363,14 +375,14 @@ function Map(props) {
         }
 
     function cellLegend(){
-        if(post.includes('cell')){
+        if(post.includes('cell') || bestMode===true){
             if (selectedDataType === 'bitrate') {
                 return (
-                    <Card style={{ width: '10rem',height:'15rem',margin:'auto'}}>
+                    <Card style={{ width: '8rem',height:'15rem',marginLeft:'0'}}>
                                         <div class='my-legend'>
                                             
                                             <div class='legend-scale' style={{marginTop:'1rem',visibility:selectedDataType=='bitrate'? "visible":"hidden"}}>
-                                                <h5 style={{marginLeft:'1rem' }}>Cell Bitrate</h5>
+                                                <h5 style={{marginLeft:'1rem' }}>5G Bitrate</h5>
                                                     <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.6rem',  backgroundColor:'hsl(180, 100%, 50%)'}}></span>&#60;20 Mbps<br/>
                                                     <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.6rem',  backgroundColor:'hsl(220, 100%, 50%)'}}></span>&#60;40 Mbps<br/>
                                                     <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.6rem',  backgroundColor:'hsl(260, 100%, 50%)'}}></span>&#60;60 Mbps<br/>
@@ -389,7 +401,7 @@ function Map(props) {
                                         <div class='my-legend'>
                                         
                                             <div class='legend-scale' style={{marginTop:'1rem',visibility:selectedDataType=='jitter'? "visible":"hidden"}}>
-                                                <h5 style={{marginLeft:'1rem' }}> Cell Jitter</h5>
+                                                <h5 style={{marginLeft:'1rem' }}> 5G Jitter</h5>
                                                     <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(180, 100%, 50%)'}}></span>&#60;0.3 ms<br/>
                                                     <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(220, 100%, 50%)'}}></span>&#60;0.7 ms<br/>
                                                     <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(240, 100%, 50%)'}}></span>&#60;1 ms<br/>
@@ -411,7 +423,7 @@ function Map(props) {
                                             
 
                                             <div class='legend-scale' style={{marginTop:'1rem',visibility:selectedDataType=='ploss'? "visible":"hidden"}}>
-                                                <h6 style={{marginLeft:'1rem' }}>Cell Packet Loss</h6>
+                                                <h6 style={{marginLeft:'1rem' }}>5G Packet Loss</h6>
                                                     <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(180, 100%, 50%)'}}></span>&#60;1%<br/>
                                                     <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(220, 100%, 50%)'}}></span>&#60;10%<br/>
                                                     <span style={{display: 'inline-block', width: '15px', height: '15px', marginLeft: '1rem',marginRight: '0.5rem',marginTop:'0.5rem',  backgroundColor:'hsl(240, 100%, 50%)'}}></span>&#60;30%<br/>
@@ -496,14 +508,14 @@ function Map(props) {
                             </Card> 
                         </div>
                         <div class="col-sm-1">
-                            <div class="float-float">
-                                {cellLegend()}
+                            <div class="float-left">
+                                {legend()}
                                 
                             </div>
                         </div>
                         <div class="col-sm-1">
-                            <div class="float-right">
-                                {legend()}
+                            <div class="float-left">
+                                {cellLegend()}
                             </div>
                         </div>
                     </div>
