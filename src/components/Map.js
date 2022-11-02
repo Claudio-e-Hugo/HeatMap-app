@@ -548,7 +548,7 @@ function Map(props) {
                             <div>
                                 {
                                     loopMode == true ?
-                                        <Card>
+                                        <Card style={{width:'10rem',marginTop:'1rem'}}>
                                             <CardContent>
                                                 <span>Day Interval: {Intervals[hours.toString()]}</span>
                                                 <br></br>
